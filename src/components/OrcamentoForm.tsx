@@ -48,7 +48,8 @@ const OrcamentoForm = () => {
       quantidadeBarras: "",
       tipoAco: ""
     };
-    setPanos([...panos, novoPano]);
+    // Adicionando o novo pano no início do array para exibição em ordem decrescente
+    setPanos([novoPano, ...panos]);
   };
 
   const atualizarPano = (id: string, dadosAtualizados: Partial<PanoData>) => {
