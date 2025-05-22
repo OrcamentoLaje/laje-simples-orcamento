@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -296,6 +295,7 @@ const OrcamentoForm = () => {
                   key={pano.id}
                   pano={pano}
                   index={index}
+                  totalPanos={panos.length}
                   onUpdate={(dados) => atualizarPano(pano.id, dados)}
                   onRemove={() => removerPano(pano.id)}
                 />
