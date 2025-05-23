@@ -97,11 +97,11 @@ const LajeDetailsForm = ({
     }
 
     // Verificar se o webhook está configurado
-    const savedWebhookUrl = localStorage.getItem("webhookUrl");
-    if (!savedWebhookUrl) {
+    const savedWebhookEnviarUrl = localStorage.getItem("webhookEnviarUrl");
+    if (!savedWebhookEnviarUrl) {
       toast({
         title: "Erro",
-        description: "O administrador ainda não configurou a URL do webhook.",
+        description: "O administrador ainda não configurou a URL do webhook para enviar orçamento.",
         variant: "destructive",
       });
       return;
@@ -130,7 +130,7 @@ const LajeDetailsForm = ({
     try {
       console.log("Enviando dados finais para o webhook:", dadosOrcamento);
 
-      await fetch(savedWebhookUrl, {
+      await fetch(savedWebhookEnviarUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

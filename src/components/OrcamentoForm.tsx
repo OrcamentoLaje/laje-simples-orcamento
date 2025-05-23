@@ -13,7 +13,8 @@ const OrcamentoForm = () => {
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState<"cliente" | "laje">("cliente");
   const [isLoading, setIsLoading] = useState(false);
-  const [webhookUrl, setWebhookUrl] = useState("");
+  const [webhookCriarUrl, setWebhookCriarUrl] = useState("");
+  const [webhookEnviarUrl, setWebhookEnviarUrl] = useState("");
   
   // Estado para controle de admin
   const [isAdminMode, setIsAdminMode] = useState(false);
@@ -28,9 +29,14 @@ const OrcamentoForm = () => {
 
   // Carregar configurações salvas
   useEffect(() => {
-    const savedWebhookUrl = localStorage.getItem("webhookUrl");
-    if (savedWebhookUrl) {
-      setWebhookUrl(savedWebhookUrl);
+    const savedWebhookCriarUrl = localStorage.getItem("webhookCriarUrl");
+    if (savedWebhookCriarUrl) {
+      setWebhookCriarUrl(savedWebhookCriarUrl);
+    }
+    
+    const savedWebhookEnviarUrl = localStorage.getItem("webhookEnviarUrl");
+    if (savedWebhookEnviarUrl) {
+      setWebhookEnviarUrl(savedWebhookEnviarUrl);
     }
     
     const savedPassword = localStorage.getItem("adminPassword");
@@ -63,20 +69,21 @@ const OrcamentoForm = () => {
     }
   };
 
-  const salvarWebhook = () => {
-    if (!webhookUrl) {
+  const salvarWebhooks = () => {
+    if (!webhookCriarUrl || !webhookEnviarUrl) {
       toast({
         title: "Erro",
-        description: "Por favor, insira a URL do webhook.",
+        description: "Por favor, insira ambas as URLs dos webhooks.",
         variant: "destructive",
       });
       return;
     }
 
-    localStorage.setItem("webhookUrl", webhookUrl);
+    localStorage.setItem("webhookCriarUrl", webhookCriarUrl);
+    localStorage.setItem("webhookEnviarUrl", webhookEnviarUrl);
     toast({
-      title: "Configuração salva",
-      description: "URL do webhook salva com sucesso.",
+      title: "Configurações salvas",
+      description: "URLs dos webhooks salvas com sucesso.",
     });
   };
 
@@ -99,11 +106,11 @@ const OrcamentoForm = () => {
     setIsLoading(true);
 
     // Verificar se o webhook está configurado
-    const savedWebhookUrl = localStorage.getItem("webhookUrl");
-    if (!savedWebhookUrl) {
+    const savedWebhookCriarUrl = localStorage.getItem("webhookCriarUrl");
+    if (!savedWebhookCriarUrl) {
       toast({
         title: "Erro",
-        description: "O administrador ainda não configurou a URL do webhook.",
+        description: "O administrador ainda não configurou a URL do webhook para criar orçamento.",
         variant: "destructive",
       });
       setIsLoading(false);
@@ -124,7 +131,7 @@ const OrcamentoForm = () => {
     try {
       console.log("Criando nova planilha para o cliente:", dadosCliente);
 
-      await fetch(savedWebhookUrl, {
+      await fetch(savedWebhookCriarUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -220,18 +227,28 @@ const OrcamentoForm = () => {
                 ) : (
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="webhook">URL do Webhook n8n</Label>
+                      <Label htmlFor="webhookCriar">Webhook para Criar Orçamento</Label>
                       <Input
-                        id="webhook"
+                        id="webhookCriar"
                         type="url"
-                        placeholder="https://seu-n8n.com/webhook/orcamento"
-                        value={webhookUrl}
-                        onChange={(e) => setWebhookUrl(e.target.value)}
+                        placeholder="https://seu-n8n.com/webhook/criar-orcamento"
+                        value={webhookCriarUrl}
+                        onChange={(e) => setWebhookCriarUrl(e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="webhookEnviar">Webhook para Enviar Orçamento</Label>
+                      <Input
+                        id="webhookEnviar"
+                        type="url"
+                        placeholder="https://seu-n8n.com/webhook/enviar-orcamento"
+                        value={webhookEnviarUrl}
+                        onChange={(e) => setWebhookEnviarUrl(e.target.value)}
                       />
                     </div>
                     <div className="flex gap-2">
-                      <Button onClick={salvarWebhook} className="flex-1">
-                        Salvar Configuração
+                      <Button onClick={salvarWebhooks} className="flex-1">
+                        Salvar Configurações
                       </Button>
                       <Button onClick={sairModoAdmin} variant="outline" className="flex-1">
                         Sair do Modo Admin
