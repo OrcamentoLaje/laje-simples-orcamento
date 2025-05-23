@@ -1,27 +1,17 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Switch } from "@/components/ui/switch";
-import { Plus, Send, Settings } from "lucide-react";
+import { ArrowRight, Settings, User, Building2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import PanoLaje from "./PanoLaje";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-
-interface PanoData {
-  id: string;
-  vao: string;
-  largura: string;
-  reforcoAdicional: boolean;
-  quantidadeBarras: string;
-  tipoAco: string;
-}
+import LajeDetailsForm from "./LajeDetailsForm";
 
 const OrcamentoForm = () => {
   const { toast } = useToast();
+  const [currentStep, setCurrentStep] = useState<"cliente" | "laje">("cliente");
   const [isLoading, setIsLoading] = useState(false);
   const [webhookUrl, setWebhookUrl] = useState("");
   
@@ -35,15 +25,6 @@ const OrcamentoForm = () => {
   const [whatsapp, setWhatsapp] = useState("");
   const [email, setEmail] = useState("");
   const [enderecoObra, setEnderecoObra] = useState("");
-  
-  // Dados da laje
-  const [modeloLaje, setModeloLaje] = useState("");
-  const [tipoLaje, setTipoLaje] = useState("");
-  const [incluirTela, setIncluirTela] = useState("");
-  const [tipoTela, setTipoTela] = useState("");
-  
-  // Panos de laje
-  const [panos, setPanos] = useState<PanoData[]>([]);
 
   // Carregar configurações salvas
   useEffect(() => {
@@ -58,31 +39,7 @@ const OrcamentoForm = () => {
     }
   }, []);
 
-  const adicionarPano = () => {
-    const novoPano: PanoData = {
-      id: Date.now().toString(),
-      vao: "",
-      largura: "",
-      reforcoAdicional: false,
-      quantidadeBarras: "",
-      tipoAco: ""
-    };
-    // Adicionando o novo pano no início do array para exibição em ordem decrescente
-    setPanos([novoPano, ...panos]);
-  };
-
-  const atualizarPano = (id: string, dadosAtualizados: Partial<PanoData>) => {
-    setPanos(panos.map(pano => 
-      pano.id === id ? { ...pano, ...dadosAtualizados } : pano
-    ));
-  };
-
-  const removerPano = (id: string) => {
-    setPanos(panos.filter(pano => pano.id !== id));
-  };
-
   const verificarAdmin = () => {
-    // Se a senha ainda não foi configurada, definir a primeira senha
     if (!savedAdminPassword) {
       localStorage.setItem("adminPassword", adminPassword);
       setSavedAdminPassword(adminPassword);
@@ -128,34 +85,18 @@ const OrcamentoForm = () => {
     setAdminPassword("");
   };
 
-  const enviarOrcamento = async () => {
-    // Validação básica
-    if (!nomeCliente || !whatsapp || !email || !enderecoObra || !modeloLaje || !tipoLaje || !incluirTela) {
+  const criarOrcamento = async () => {
+    // Validação dos dados do cliente
+    if (!nomeCliente || !whatsapp || !email || !enderecoObra) {
       toast({
         title: "Erro",
-        description: "Por favor, preencha todos os campos obrigatórios.",
+        description: "Por favor, preencha todos os campos do cliente.",
         variant: "destructive",
       });
       return;
     }
 
-    if (incluirTela === "sim" && !tipoTela) {
-      toast({
-        title: "Erro",
-        description: "Por favor, selecione o tipo de tela.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (panos.length === 0) {
-      toast({
-        title: "Erro",
-        description: "Por favor, adicione pelo menos um pano de laje.",
-        variant: "destructive",
-      });
-      return;
-    }
+    setIsLoading(true);
 
     // Verificar se o webhook está configurado
     const savedWebhookUrl = localStorage.getItem("webhookUrl");
@@ -165,61 +106,45 @@ const OrcamentoForm = () => {
         description: "O administrador ainda não configurou a URL do webhook.",
         variant: "destructive",
       });
+      setIsLoading(false);
       return;
     }
 
-    setIsLoading(true);
-
-    const dadosOrcamento = {
+    const dadosCliente = {
+      acao: "criar_planilha",
       cliente: {
         nome: nomeCliente,
         whatsapp: whatsapp,
         email: email,
         enderecoObra: enderecoObra
       },
-      laje: {
-        modelo: modeloLaje,
-        tipo: tipoLaje,
-        incluirTela: incluirTela,
-        tipoTela: incluirTela === "sim" ? tipoTela : null
-      },
-      panos: panos,
       timestamp: new Date().toISOString()
     };
 
     try {
-      console.log("Enviando dados para o webhook:", dadosOrcamento);
+      console.log("Criando nova planilha para o cliente:", dadosCliente);
 
-      const response = await fetch(savedWebhookUrl, {
+      await fetch(savedWebhookUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         mode: "no-cors",
-        body: JSON.stringify(dadosOrcamento),
+        body: JSON.stringify(dadosCliente),
       });
 
       toast({
-        title: "Orçamento enviado com sucesso!",
-        description: "Você receberá uma resposta por WhatsApp e e-mail em breve.",
+        title: "Orçamento iniciado!",
+        description: "Agora preencha os dados técnicos da laje.",
       });
 
-      // Limpar formulário
-      setNomeCliente("");
-      setWhatsapp("");
-      setEmail("");
-      setEnderecoObra("");
-      setModeloLaje("");
-      setTipoLaje("");
-      setIncluirTela("");
-      setTipoTela("");
-      setPanos([]);
+      setCurrentStep("laje");
 
     } catch (error) {
-      console.error("Erro ao enviar orçamento:", error);
+      console.error("Erro ao criar orçamento:", error);
       toast({
         title: "Erro",
-        description: "Falha ao enviar orçamento. Tente novamente.",
+        description: "Falha ao criar orçamento. Tente novamente.",
         variant: "destructive",
       });
     } finally {
@@ -227,14 +152,43 @@ const OrcamentoForm = () => {
     }
   };
 
+  const resetarFormulario = () => {
+    setCurrentStep("cliente");
+    setNomeCliente("");
+    setWhatsapp("");
+    setEmail("");
+    setEnderecoObra("");
+  };
+
+  if (currentStep === "laje") {
+    return (
+      <LajeDetailsForm
+        nomeCliente={nomeCliente}
+        whatsapp={whatsapp}
+        email={email}
+        enderecoObra={enderecoObra}
+        onVoltar={resetarFormulario}
+      />
+    );
+  }
+
   return (
-    <>
-      <Card className="w-full shadow-lg">
-        <CardHeader className="bg-blue-600 text-white rounded-t-lg flex flex-row items-center justify-between">
-          <CardTitle className="text-2xl">Dados para Orçamento</CardTitle>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 p-4">
+      <div className="max-w-md mx-auto">
+        {/* Header com configurações */}
+        <div className="flex justify-between items-center mb-8">
+          <div className="text-center flex-1">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Orçamento de Laje
+            </h1>
+            <p className="text-gray-600">
+              Solicite seu orçamento facilmente
+            </p>
+          </div>
+          
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" className="text-white hover:text-white hover:bg-blue-700">
+              <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-800">
                 <Settings className="w-5 h-5" />
               </Button>
             </SheetTrigger>
@@ -288,168 +242,92 @@ const OrcamentoForm = () => {
               </div>
             </SheetContent>
           </Sheet>
-        </CardHeader>
-        
-        <CardContent className="p-6 space-y-6">
-          {/* Dados do Cliente */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="nome">Nome do Cliente *</Label>
-              <Input
-                id="nome"
-                value={nomeCliente}
-                onChange={(e) => setNomeCliente(e.target.value)}
-                placeholder="Digite o nome completo"
-              />
-            </div>
-            
-            <div>
-              <Label htmlFor="whatsapp">WhatsApp *</Label>
-              <Input
-                id="whatsapp"
-                value={whatsapp}
-                onChange={(e) => setWhatsapp(e.target.value)}
-                placeholder="(00) 00000-0000"
-              />
-            </div>
-            
-            <div>
-              <Label htmlFor="email">E-mail *</Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="email@exemplo.com"
-              />
-            </div>
-            
-            <div>
-              <Label htmlFor="endereco">Endereço da Obra *</Label>
-              <Input
-                id="endereco"
-                value={enderecoObra}
-                onChange={(e) => setEnderecoObra(e.target.value)}
-                placeholder="Endereço completo da obra"
-              />
-            </div>
-          </div>
+        </div>
 
-          {/* Modelo da Laje */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label>Modelo da Laje *</Label>
-              <Select value={modeloLaje} onValueChange={setModeloLaje}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione o modelo da laje" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="H8">Laje H8</SelectItem>
-                  <SelectItem value="H12">Laje H12</SelectItem>
-                  <SelectItem value="H16">Laje H16</SelectItem>
-                  <SelectItem value="H20">Laje H20</SelectItem>
-                  <SelectItem value="H25">Laje H25</SelectItem>
-                  <SelectItem value="H30">Laje H30</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label>Tipo de Laje *</Label>
-              <Select value={tipoLaje} onValueChange={setTipoLaje}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione o tipo da laje" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="lajota-ceramica">Lajota Cerâmica</SelectItem>
-                  <SelectItem value="eps">EPS</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {/* Incluir Tela */}
-          <div>
-            <Label className="text-base font-medium">Deseja incluir Tela (Malha)? *</Label>
-            <RadioGroup value={incluirTela} onValueChange={setIncluirTela} className="flex gap-6 mt-2">
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="sim" id="tela-sim" />
-                <Label htmlFor="tela-sim">Sim</Label>
+        {/* Card principal */}
+        <Card className="shadow-xl border-0 overflow-hidden">
+          <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+            <CardTitle className="flex items-center gap-3 text-xl">
+              <User className="w-6 h-6" />
+              Dados do Cliente
+            </CardTitle>
+          </CardHeader>
+          
+          <CardContent className="p-6 space-y-6">
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="nome" className="text-base font-medium text-gray-700">
+                  Nome Completo *
+                </Label>
+                <Input
+                  id="nome"
+                  value={nomeCliente}
+                  onChange={(e) => setNomeCliente(e.target.value)}
+                  placeholder="Digite seu nome completo"
+                  className="mt-2 h-12 text-base"
+                />
               </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="nao" id="tela-nao" />
-                <Label htmlFor="tela-nao">Não</Label>
+              
+              <div>
+                <Label htmlFor="whatsapp" className="text-base font-medium text-gray-700">
+                  WhatsApp *
+                </Label>
+                <Input
+                  id="whatsapp"
+                  value={whatsapp}
+                  onChange={(e) => setWhatsapp(e.target.value)}
+                  placeholder="(00) 00000-0000"
+                  className="mt-2 h-12 text-base"
+                />
               </div>
-            </RadioGroup>
-          </div>
-
-          {/* Tipo de Tela (condicional) */}
-          {incluirTela === "sim" && (
-            <div>
-              <Label>Tipo de Tela</Label>
-              <Select value={tipoTela} onValueChange={setTipoTela}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione o tipo de tela" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Q45">Tela Q45</SelectItem>
-                  <SelectItem value="Q61">Tela Q61</SelectItem>
-                  <SelectItem value="Q92">Tela Q92</SelectItem>
-                  <SelectItem value="Q138">Tela Q138</SelectItem>
-                  <SelectItem value="Q196">Tela Q196</SelectItem>
-                </SelectContent>
-              </Select>
+              
+              <div>
+                <Label htmlFor="email" className="text-base font-medium text-gray-700">
+                  E-mail *
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="seu@email.com"
+                  className="mt-2 h-12 text-base"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="endereco" className="text-base font-medium text-gray-700">
+                  <Building2 className="w-4 h-4 inline mr-2" />
+                  Endereço da Obra *
+                </Label>
+                <Input
+                  id="endereco"
+                  value={enderecoObra}
+                  onChange={(e) => setEnderecoObra(e.target.value)}
+                  placeholder="Endereço completo da obra"
+                  className="mt-2 h-12 text-base"
+                />
+              </div>
             </div>
-          )}
 
-          {/* Panos de Laje */}
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <Label className="text-lg font-semibold">Panos de Laje</Label>
-              <Button onClick={adicionarPano} variant="outline" size="sm">
-                <Plus className="w-4 h-4 mr-2" />
-                Adicionar Pano
-              </Button>
-            </div>
-            
-            {panos.length === 0 ? (
-              <div className="text-center py-8 text-gray-500 border-2 border-dashed border-gray-300 rounded-lg">
-                Nenhum pano adicionado. Clique em "Adicionar Pano" para começar.
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {panos.map((pano, index) => (
-                  <PanoLaje
-                    key={pano.id}
-                    pano={pano}
-                    index={index}
-                    totalPanos={panos.length}
-                    onUpdate={(dados) => atualizarPano(pano.id, dados)}
-                    onRemove={() => removerPano(pano.id)}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Botão de Envio */}
-          <Button 
-            onClick={enviarOrcamento} 
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-lg"
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              "Enviando..."
-            ) : (
-              <>
-                <Send className="w-5 h-5 mr-2" />
-                Enviar para Orçamento
-              </>
-            )}
-          </Button>
-        </CardContent>
-      </Card>
-    </>
+            <Button 
+              onClick={criarOrcamento} 
+              className="w-full h-14 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-lg font-semibold shadow-lg"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                "Criando Orçamento..."
+              ) : (
+                <>
+                  Criar Orçamento
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </>
+              )}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   );
 };
 
