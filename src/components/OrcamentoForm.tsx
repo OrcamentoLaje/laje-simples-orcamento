@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -39,6 +38,7 @@ const OrcamentoForm = () => {
   
   // Dados da laje
   const [modeloLaje, setModeloLaje] = useState("");
+  const [tipoLaje, setTipoLaje] = useState("");
   const [incluirTela, setIncluirTela] = useState("");
   const [tipoTela, setTipoTela] = useState("");
   
@@ -130,7 +130,7 @@ const OrcamentoForm = () => {
 
   const enviarOrcamento = async () => {
     // Validação básica
-    if (!nomeCliente || !whatsapp || !email || !enderecoObra || !modeloLaje || !incluirTela) {
+    if (!nomeCliente || !whatsapp || !email || !enderecoObra || !modeloLaje || !tipoLaje || !incluirTela) {
       toast({
         title: "Erro",
         description: "Por favor, preencha todos os campos obrigatórios.",
@@ -179,6 +179,7 @@ const OrcamentoForm = () => {
       },
       laje: {
         modelo: modeloLaje,
+        tipo: tipoLaje,
         incluirTela: incluirTela,
         tipoTela: incluirTela === "sim" ? tipoTela : null
       },
@@ -209,6 +210,7 @@ const OrcamentoForm = () => {
       setEmail("");
       setEnderecoObra("");
       setModeloLaje("");
+      setTipoLaje("");
       setIncluirTela("");
       setTipoTela("");
       setPanos([]);
@@ -334,21 +336,36 @@ const OrcamentoForm = () => {
           </div>
 
           {/* Modelo da Laje */}
-          <div>
-            <Label>Modelo da Laje *</Label>
-            <Select value={modeloLaje} onValueChange={setModeloLaje}>
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione o modelo da laje" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="H8">Laje H8</SelectItem>
-                <SelectItem value="H12">Laje H12</SelectItem>
-                <SelectItem value="H16">Laje H16</SelectItem>
-                <SelectItem value="H20">Laje H20</SelectItem>
-                <SelectItem value="H25">Laje H25</SelectItem>
-                <SelectItem value="H30">Laje H30</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label>Modelo da Laje *</Label>
+              <Select value={modeloLaje} onValueChange={setModeloLaje}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione o modelo da laje" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="H8">Laje H8</SelectItem>
+                  <SelectItem value="H12">Laje H12</SelectItem>
+                  <SelectItem value="H16">Laje H16</SelectItem>
+                  <SelectItem value="H20">Laje H20</SelectItem>
+                  <SelectItem value="H25">Laje H25</SelectItem>
+                  <SelectItem value="H30">Laje H30</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label>Tipo de Laje *</Label>
+              <Select value={tipoLaje} onValueChange={setTipoLaje}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione o tipo da laje" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="lajota-ceramica">Lajota Cerâmica</SelectItem>
+                  <SelectItem value="eps">EPS</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           {/* Incluir Tela */}
