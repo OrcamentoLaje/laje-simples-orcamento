@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -109,6 +108,14 @@ const LajeDetailsForm = ({
 
     setIsLoading(true);
 
+    // Converter os valores numéricos dos panos para decimais
+    const panosFormatados = panos.map(pano => ({
+      ...pano,
+      vao: pano.vao ? parseFloat(pano.vao) : 0,
+      largura: pano.largura ? parseFloat(pano.largura) : 0,
+      quantidadeBarras: pano.quantidadeBarras ? parseInt(pano.quantidadeBarras) : 0
+    }));
+
     const dadosOrcamento = {
       acao: "finalizar_orcamento",
       cliente: {
@@ -123,7 +130,7 @@ const LajeDetailsForm = ({
         incluirTela: incluirTela,
         tipoTela: incluirTela === "sim" ? tipoTela : null
       },
-      panos: panos,
+      panos: panosFormatados,
       timestamp: new Date().toISOString()
     };
 
