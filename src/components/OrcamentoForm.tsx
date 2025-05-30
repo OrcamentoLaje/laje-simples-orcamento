@@ -18,14 +18,14 @@ const OrcamentoForm = ({ planilha = "", orcamento = "" }: OrcamentoFormProps) =>
   const [currentStep, setCurrentStep] = useState<"cliente" | "laje">("cliente");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Inicializa com as props ou com string vazia, para serem atualizados pelo useEffect se necessário
-  const [webhookCriarUrl, setWebhookCriarUrl] = useState(planilha);
-  const [webhookEnviarUrl, setWebhookEnviarUrl] = useState(orcamento);
-
   // Estado para controle de admin
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [adminPassword, setAdminPassword] = useState("");
   const [savedAdminPassword, setSavedAdminPassword] = useState("");
+
+  // URLs dos webhooks
+  const [webhookCriarUrl, setWebhookCriarUrl] = useState(planilha);
+  const [webhookEnviarUrl, setWebhookEnviarUrl] = useState(orcamento);
 
   // Dados do cliente
   const [nomeCliente, setNomeCliente] = useState("");
@@ -33,20 +33,23 @@ const OrcamentoForm = ({ planilha = "", orcamento = "" }: OrcamentoFormProps) =>
   const [email, setEmail] = useState("");
   const [enderecoObra, setEnderecoObra] = useState("");
 
-  // Carregar configurações salvas e atualizar webhooks se props vazias
+  // Carregar configurações salvas apenas no cliente
   useEffect(() => {
-    const savedPassword = localStorage.getItem("adminPassword");
-    if (savedPassword) {
-      setSavedAdminPassword(savedPassword);
-    }
+    // Verificar se estamos no cliente (browser)
+    if (typeof window !== 'undefined') {
+      const savedPassword = localStorage.getItem("adminPassword");
+      if (savedPassword) {
+        setSavedAdminPassword(savedPassword);
+      }
 
-    if (!planilha) {
-      const savedCriar = localStorage.getItem("webhookCriarUrl");
-      if (savedCriar) setWebhookCriarUrl(savedCriar);
-    }
-    if (!orcamento) {
-      const savedEnviar = localStorage.getItem("webhookEnviarUrl");
-      if (savedEnviar) setWebhookEnviarUrl(savedEnviar);
+      if (!planilha) {
+        const savedCriar = localStorage.getItem("webhookCriarUrl");
+        if (savedCriar) setWebhookCriarUrl(savedCriar);
+      }
+      if (!orcamento) {
+        const savedEnviar = localStorage.getItem("webhookEnviarUrl");
+        if (savedEnviar) setWebhookEnviarUrl(savedEnviar);
+      }
     }
   }, [planilha, orcamento]);
 
@@ -60,6 +63,8 @@ const OrcamentoForm = ({ planilha = "", orcamento = "" }: OrcamentoFormProps) =>
   }, [orcamento]);
 
   const verificarAdmin = () => {
+    if (typeof window === 'undefined') return;
+
     if (!savedAdminPassword) {
       localStorage.setItem("adminPassword", adminPassword);
       setSavedAdminPassword(adminPassword);
@@ -84,6 +89,8 @@ const OrcamentoForm = ({ planilha = "", orcamento = "" }: OrcamentoFormProps) =>
   };
 
   const salvarWebhooks = () => {
+    if (typeof window === 'undefined') return;
+
     if (!webhookCriarUrl || !webhookEnviarUrl) {
       toast({
         title: "Erro",
@@ -120,7 +127,10 @@ const OrcamentoForm = ({ planilha = "", orcamento = "" }: OrcamentoFormProps) =>
     setIsLoading(true);
 
     // Verificar se o webhook está configurado
-    const savedWebhookCriarUrl = localStorage.getItem("webhookCriarUrl");
+    const savedWebhookCriarUrl = typeof window !== 'undefined' 
+      ? localStorage.getItem("webhookCriarUrl") 
+      : webhookCriarUrl;
+
     if (!savedWebhookCriarUrl) {
       toast({
         title: "Erro",
@@ -238,7 +248,7 @@ const OrcamentoForm = ({ planilha = "", orcamento = "" }: OrcamentoFormProps) =>
                       <Input
                         id="webhookCriar"
                         type="url"
-                        placeholder=""
+                        placeholder="https://exemplo.com/webhook-criar"
                         value={webhookCriarUrl}
                         onChange={(e) => setWebhookCriarUrl(e.target.value)}
                       />
@@ -248,7 +258,7 @@ const OrcamentoForm = ({ planilha = "", orcamento = "" }: OrcamentoFormProps) =>
                       <Input
                         id="webhookEnviar"
                         type="url"
-                        placeholder=""
+                        placeholder="https://exemplo.com/webhook-enviar"
                         value={webhookEnviarUrl}
                         onChange={(e) => setWebhookEnviarUrl(e.target.value)}
                       />
@@ -293,4 +303,65 @@ const OrcamentoForm = ({ planilha = "", orcamento = "" }: OrcamentoFormProps) =>
               </div>
 
               <div>
-                <Label htmlFor="whatsapp" className="text
+                <Label htmlFor="whatsapp" className="text-base font-medium text-gray-700">
+                  WhatsApp *
+                </Label>
+                <Input
+                  id="whatsapp"
+                  value={whatsapp}
+                  onChange={(e) => setWhatsapp(e.target.value)}
+                  placeholder="(11) 99999-9999"
+                  className="mt-2 h-12 text-base"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="email" className="text-base font-medium text-gray-700">
+                  E-mail *
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="seu@email.com"
+                  className="mt-2 h-12 text-base"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="endereco" className="text-base font-medium text-gray-700">
+                  Endereço da Obra *
+                </Label>
+                <Input
+                  id="endereco"
+                  value={enderecoObra}
+                  onChange={(e) => setEnderecoObra(e.target.value)}
+                  placeholder="Rua, número, bairro, cidade"
+                  className="mt-2 h-12 text-base"
+                />
+              </div>
+            </div>
+
+            <Button 
+              onClick={criarOrcamento} 
+              className="w-full h-12 text-lg font-semibold bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                "Criando orçamento..."
+              ) : (
+                <>
+                  Continuar para Dados da Laje
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </>
+              )}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
+export default OrcamentoForm;
