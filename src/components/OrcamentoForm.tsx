@@ -13,10 +13,21 @@ type OrcamentoFormProps = {
   orcamento?: string;
 };
 
-const OrcamentoForm = ({ planilha = "", orcamento = "" }: OrcamentoFormProps) => {
-  const { toast } = useToast();
-  const [currentStep, setCurrentStep] = useState<"cliente" | "laje">("cliente");
-  const [isLoading, setIsLoading] = useState(false);
+
+const OrcamentoForm = ({ planilha, orcamento }: OrcamentoFormProps) => {
+  const [webhookCriarUrl, setWebhookCriarUrl] = useState("");
+  const [webhookEnviarUrl, setWebhookEnviarUrl] = useState("");
+
+  useEffect(() => {
+    console.log("Webhook Planilha (props):", planilha);
+    console.log("Webhook Orçamento (props):", orcamento);
+    console.log("Estado webhookCriarUrl:", webhookCriarUrl);
+    console.log("Estado webhookEnviarUrl:", webhookEnviarUrl);
+  }, [planilha, orcamento, webhookCriarUrl, webhookEnviarUrl]);
+
+  // ... resto do código e return
+};
+
 
   // Estado para controle de admin
   const [isAdminMode, setIsAdminMode] = useState(false);
