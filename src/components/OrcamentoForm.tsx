@@ -29,15 +29,15 @@ const OrcamentoForm = () => {
 
   // Carregar configurações salvas
   useEffect(() => {
-    const savedWebhookCriarUrl = localStorage.getItem("webhookCriarUrl");
-    if (savedWebhookCriarUrl) {
-      setWebhookCriarUrl(savedWebhookCriarUrl);
-    }
+    //const savedWebhookCriarUrl = localStorage.getItem("webhookCriarUrl");
+    //if (savedWebhookCriarUrl) {
+      //setWebhookCriarUrl(savedWebhookCriarUrl);
+    //}
     
-    const savedWebhookEnviarUrl = localStorage.getItem("webhookEnviarUrl");
-    if (savedWebhookEnviarUrl) {
-      setWebhookEnviarUrl(savedWebhookEnviarUrl);
-    }
+    //const savedWebhookEnviarUrl = localStorage.getItem("webhookEnviarUrl");
+    //if (savedWebhookEnviarUrl) {
+      //setWebhookEnviarUrl(savedWebhookEnviarUrl);
+    //}
     
     const savedPassword = localStorage.getItem("adminPassword");
     if (savedPassword) {
