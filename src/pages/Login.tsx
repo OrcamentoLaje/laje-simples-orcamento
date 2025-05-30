@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -31,7 +32,7 @@ const Login = () => {
 
   const validarEmailEBuscarLinks = async (email: string) => {
     try {
-      const response = await fetch("https://seu-n8n.com/webhook/email-entrada", {
+      const response = await fetch("https://webhook.dev.atendeobra.com.br/webhook-test/email", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
