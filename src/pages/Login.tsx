@@ -12,6 +12,7 @@ import { Mail } from "lucide-react";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [manterSalvo, setManterSalvo] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -29,7 +30,7 @@ const Login = () => {
     }
   }, [navigate]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!email) {
@@ -41,17 +42,45 @@ const Login = () => {
       return;
     }
 
-    // Salva o email no localStorage
-    localStorage.setItem("userEmail", email);
-    localStorage.setItem("keepLogin", manterSalvo.toString());
-    
-    toast({
-      title: "Login realizado",
-      description: "Bem-vindo ao sistema!",
-    });
+    setIsLoading(true);
 
-    // Redireciona para a página de orçamento
-    navigate("/orcamento");
+    try {
+      // Envia webhook com o email
+      const webhookResponse = await fetch("https://webhook.dev.atendeobra.com.br/webhook-test/email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          timestamp: new Date().toISOString(),
+          action: "login"
+        }),
+      });
+
+      console.log("Webhook enviado:", webhookResponse.status);
+
+      // Salva o email no localStorage
+      localStorage.setItem("userEmail", email);
+      localStorage.setItem("keepLogin", manterSalvo.toString());
+      
+      toast({
+        title: "Login realizado",
+        description: "Bem-vindo ao sistema!",
+      });
+
+      // Redireciona para a página de orçamento
+      navigate("/orcamento");
+    } catch (error) {
+      console.error("Erro ao enviar webhook:", error);
+      toast({
+        title: "Erro",
+        description: "Erro ao fazer login. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -77,6 +106,7 @@ const Login = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full h-12 text-base"
+                disabled={isLoading}
               />
             </div>
             
@@ -85,14 +115,19 @@ const Login = () => {
                 id="manterSalvo"
                 checked={manterSalvo}
                 onCheckedChange={(checked) => setManterSalvo(checked as boolean)}
+                disabled={isLoading}
               />
               <Label htmlFor="manterSalvo" className="text-sm text-gray-600">
                 Manter-me conectado
               </Label>
             </div>
             
-            <Button type="submit" className="w-full h-12 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-base font-semibold">
-              Entrar
+            <Button 
+              type="submit" 
+              className="w-full h-12 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-base font-semibold"
+              disabled={isLoading}
+            >
+              {isLoading ? "Entrando..." : "Entrar"}
             </Button>
           </form>
         </CardContent>
