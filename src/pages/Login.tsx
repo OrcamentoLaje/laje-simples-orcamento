@@ -55,14 +55,22 @@ const Login = () => {
 
       const data = await response.json();
 
-      const linkPlanilha = data[0]?.link_planilha;
-      const linkOrcamento = data[0]?.link_orcamento;
-     
+      //const linkPlanilha = data[0]?.link_planilha;
+      //const linkOrcamento = data[0]?.link_orcamento;
 
-      localStorage.setItem("webhookCriar", linkPlanilha);
-      localStorage.setItem("webhookEnviar", linkOrcamento);
-      localStorage.setItem("userEmail", email);
-      localStorage.setItem("keepLogin", manterSalvo.toString());
+      if (data && data.length > 0 && data[0].redirectUrl) {
+        const redirectUrl = data[0].redirectUrl;
+        const urlParams = new URLSearchParams(redirectUrl.split('?')[1]);
+    
+        const linkPlanilha = decodeURIComponent(urlParams.get('planilha'));
+        const linkOrcamento = decodeURIComponent(urlParams.get('orcamento'));
+  
+
+        localStorage.setItem("webhookCriar", linkPlanilha);
+        localStorage.setItem("webhookEnviar", linkOrcamento);
+        localStorage.setItem("userEmail", email);
+        localStorage.setItem("keepLogin", manterSalvo.toString());
+}
 
       navigate("/orcamento");
 
