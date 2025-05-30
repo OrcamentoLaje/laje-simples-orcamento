@@ -55,8 +55,11 @@ const Login = () => {
 
       const data = await response.json();
 
-      const linkPlanilha = data.link_planilha;
-      const linkOrcamento = data.link_orcamento;
+      const linkPlanilha = data[0]?.link_planilha;
+      const linkOrcamento = data[0]?.link_orcamento;
+
+      //const linkPlanilha = data.link_planilha;
+      //const linkOrcamento = data.link_orcamento;
 
       localStorage.setItem("webhookCriar", linkPlanilha);
       localStorage.setItem("webhookEnviar", linkOrcamento);
