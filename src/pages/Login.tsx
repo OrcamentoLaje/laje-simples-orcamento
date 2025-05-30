@@ -55,22 +55,28 @@ const Login = () => {
 
       const data = await response.json();
 
-      //const linkPlanilha = data[0]?.link_planilha;
-      //const linkOrcamento = data[0]?.link_orcamento;
+      // 🔍 Log completo da resposta do webhook
+      console.log("Resposta do webhook:", data);
 
       if (data && data.length > 0 && data[0].redirectUrl) {
         const redirectUrl = data[0].redirectUrl;
+
+        console.log("Redirect URL recebido:", redirectUrl);
+
         const urlParams = new URLSearchParams(redirectUrl.split('?')[1]);
-    
+
         const linkPlanilha = decodeURIComponent(urlParams.get('planilha'));
         const linkOrcamento = decodeURIComponent(urlParams.get('orcamento'));
-  
+
+        // 🔍 Logs dos links extraídos
+        console.log("Link Planilha extraído:", linkPlanilha);
+        console.log("Link Orçamento extraído:", linkOrcamento);
 
         localStorage.setItem("webhookCriar", linkPlanilha);
         localStorage.setItem("webhookEnviar", linkOrcamento);
         localStorage.setItem("userEmail", email);
         localStorage.setItem("keepLogin", manterSalvo.toString());
-}
+      }
 
       navigate("/orcamento");
 
