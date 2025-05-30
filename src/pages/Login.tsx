@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -17,52 +16,19 @@ const Login = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Verifica se já existe um email salvo
     const savedEmail = localStorage.getItem("userEmail");
     const keepLogin = localStorage.getItem("keepLogin") === "true";
-    
+
     if (savedEmail && keepLogin) {
-      // Se tem email salvo e usuário quer manter salvo, redireciona direto
       navigate("/orcamento");
     } else if (savedEmail) {
-      // Se tem email mas não quer manter salvo, apenas preenche o campo
       setEmail(savedEmail);
     }
   }, [navigate]);
 
-  const validarEmailEBuscarLinks = async (email: string) => {
-    try {
-      const response = await fetch("https://webhook.dev.atendeobra.com.br/webhook-test/email", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ email })
-      });
-
-      const data = await response.json();
-
-      // Armazena os links nos campos onde o admin configura
-      const linkPlanilha = data.link_planilha;
-      const linkOrcamento = data.link_orcamento;
-
-      // Salva nos mesmos campos que o WebhookConfig usa
-      localStorage.setItem("webhookCriar", linkPlanilha);
-      localStorage.setItem("webhookEnviar", linkOrcamento);
-
-      console.log("Links recebidos com sucesso!");
-      console.log("Link planilha:", linkPlanilha);
-      console.log("Link orçamento:", linkOrcamento);
-
-    } catch (error) {
-      console.error("Erro ao buscar links:", error);
-      throw error;
-    }
-  };
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email) {
       toast({
         title: "Erro",
@@ -75,40 +41,35 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      // Primeiro, valida o email e busca os links
-      await validarEmailEBuscarLinks(email);
-
-      // Depois envia o webhook original
-      const webhookResponse = await fetch("https://webhook.dev.atendeobra.com.br/webhook-test/email", {
+      const response = await fetch("https://webhook.dev.atendeobra.com.br/webhook-test/email", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-          email: email,
-          timestamp: new Date().toISOString(),
-          action: "login"
-        }),
+        body: JSON.stringify({ email })
       });
 
-      console.log("Webhook enviado:", webhookResponse.status);
+      if (!response.ok) {
+        throw new Error("Erro ao buscar links do webhook");
+      }
 
-      // Salva o email no localStorage
+      const data = await response.json();
+
+      const linkPlanilha = data.link_planilha;
+      const linkOrcamento = data.link_orcamento;
+
+      localStorage.setItem("webhookCriar", linkPlanilha);
+      localStorage.setItem("webhookEnviar", linkOrcamento);
       localStorage.setItem("userEmail", email);
       localStorage.setItem("keepLogin", manterSalvo.toString());
-      
-      toast({
-        title: "Login realizado",
-        description: "Bem-vindo ao sistema!",
-      });
 
-      // Redireciona para a página de orçamento
       navigate("/orcamento");
+
     } catch (error) {
-      console.error("Erro no processo de login:", error);
+      console.error("Erro no login:", error);
       toast({
         title: "Erro",
-        description: "Erro ao fazer login. Verifique seu email e tente novamente.",
+        description: "Não foi possível entrar. Verifique seu e-mail.",
         variant: "destructive",
       });
     } finally {
@@ -142,7 +103,7 @@ const Login = () => {
                 disabled={isLoading}
               />
             </div>
-            
+
             <div className="flex items-center space-x-2">
               <Checkbox
                 id="manterSalvo"
@@ -154,7 +115,7 @@ const Login = () => {
                 Manter-me conectado
               </Label>
             </div>
-            
+
             <Button 
               type="submit" 
               className="w-full h-12 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-base font-semibold"
