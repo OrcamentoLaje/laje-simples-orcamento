@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -39,10 +38,6 @@ const Login = () => {
         },
         body: JSON.stringify({ email })
       });
-
-      if (!response.ok) {
-        throw new Error("Erro ao validar e-mail");
-      }
 
       const data = await response.json();
 
