@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -133,7 +134,7 @@ const Login = () => {
               <Label htmlFor="email" className="text-base font-medium text-gray-700">Email</Label>
               <Input
                 id="email"
-                type="email"
+                type="text"
                 placeholder="seu@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
