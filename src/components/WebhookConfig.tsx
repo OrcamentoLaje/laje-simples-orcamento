@@ -22,7 +22,7 @@ const WebhookConfig = () => {
           <Input
             id="webhookCriar"
             type="url"
-            placeholder="https://webhook.dev.atendeobra.com.br/webhook-criar"
+            placeholder=""
             value={webhookCriar}
             onChange={(e) => setWebhookCriar(e.target.value)}
           />
@@ -33,7 +33,7 @@ const WebhookConfig = () => {
           <Input
             id="webhookEnviar"
             type="url"
-            placeholder="https://webhook.dev.atendeobra.com.br/webhook-enviar"
+            placeholder=""
             value={webhookEnviar}
             onChange={(e) => setWebhookEnviar(e.target.value)}
           />
