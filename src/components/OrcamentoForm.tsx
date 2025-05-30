@@ -231,7 +231,7 @@ const OrcamentoForm = () => {
                       <Input
                         id="webhookCriar"
                         type="url"
-                        placeholder="https://seu-n8n.com/webhook/criar-orcamento"
+                        placeholder=""
                         value={webhookCriarUrl}
                         onChange={(e) => setWebhookCriarUrl(e.target.value)}
                       />
@@ -241,7 +241,7 @@ const OrcamentoForm = () => {
                       <Input
                         id="webhookEnviar"
                         type="url"
-                        placeholder="https://seu-n8n.com/webhook/enviar-orcamento"
+                        placeholder=""
                         value={webhookEnviarUrl}
                         onChange={(e) => setWebhookEnviarUrl(e.target.value)}
                       />
