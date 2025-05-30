@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ArrowRight, Settings, User, Building2 } from "lucide-react";
+import { ArrowRight, Settings, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import LajeDetailsForm from "./LajeDetailsForm";
@@ -13,30 +13,19 @@ type OrcamentoFormProps = {
   orcamento?: string;
 };
 
-
 const OrcamentoForm = ({ planilha, orcamento }: OrcamentoFormProps) => {
-  const [webhookCriarUrl, setWebhookCriarUrl] = useState("_");
-  const [webhookEnviarUrl, setWebhookEnviarUrl] = useState("_");
+  const { toast } = useToast();
+  const [currentStep, setCurrentStep] = useState<"cliente" | "laje">("cliente");
+  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    console.log("Webhook Planilha (props):", planilha);
-    console.log("Webhook Orçamento (props):", orcamento);
-    console.log("Estado webhookCriarUrl:", webhookCriarUrl);
-    console.log("Estado webhookEnviarUrl:", webhookEnviarUrl);
-  }, [planilha, orcamento, webhookCriarUrl, webhookEnviarUrl]);
-
-  // ... resto do código e return
-};
-
-
-  // Estado para controle de admin
+  // Estado para control de admin
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [adminPassword, setAdminPassword] = useState("");
   const [savedAdminPassword, setSavedAdminPassword] = useState("");
 
   // URLs dos webhooks
-  const [webhookCriarUrl, setWebhookCriarUrl] = useState(planilha);
-  const [webhookEnviarUrl, setWebhookEnviarUrl] = useState(orcamento);
+  const [webhookCriarUrl, setWebhookCriarUrl] = useState("");
+  const [webhookEnviarUrl, setWebhookEnviarUrl] = useState("");
 
   // Dados do cliente
   const [nomeCliente, setNomeCliente] = useState("");
@@ -46,37 +35,33 @@ const OrcamentoForm = ({ planilha, orcamento }: OrcamentoFormProps) => {
 
   // Carregar configurações salvas apenas no cliente
   useEffect(() => {
-    // Verificar se estamos no cliente (browser)
     if (typeof window !== 'undefined') {
       const savedPassword = localStorage.getItem("adminPassword");
       if (savedPassword) {
         setSavedAdminPassword(savedPassword);
       }
 
-      if (!planilha) {
-        const savedCriar = localStorage.getItem("webhookCriarUrl");
-        if (savedCriar) setWebhookCriarUrl(savedCriar);
-      }
-      if (!orcamento) {
-        const savedEnviar = localStorage.getItem("webhookEnviarUrl");
-        if (savedEnviar) setWebhookEnviarUrl(savedEnviar);
-      }
+      // Carregar webhooks salvos ou usar props
+      const savedCriar = localStorage.getItem("webhookCriarUrl");
+      const savedEnviar = localStorage.getItem("webhookEnviarUrl");
+      
+      setWebhookCriarUrl(planilha || savedCriar || "");
+      setWebhookEnviarUrl(orcamento || savedEnviar || "");
     }
   }, [planilha, orcamento]);
-
-  // Atualizar estados se as props mudarem dinamicamente
-  useEffect(() => {
-    if (planilha) setWebhookCriarUrl(planilha);
-  }, [planilha]);
-
-  useEffect(() => {
-    if (orcamento) setWebhookEnviarUrl(orcamento);
-  }, [orcamento]);
 
   const verificarAdmin = () => {
     if (typeof window === 'undefined') return;
 
     if (!savedAdminPassword) {
+      if (!adminPassword.trim()) {
+        toast({
+          title: "Erro",
+          description: "Por favor, digite uma senha.",
+          variant: "destructive",
+        });
+        return;
+      }
       localStorage.setItem("adminPassword", adminPassword);
       setSavedAdminPassword(adminPassword);
       setIsAdminMode(true);
@@ -102,7 +87,7 @@ const OrcamentoForm = ({ planilha, orcamento }: OrcamentoFormProps) => {
   const salvarWebhooks = () => {
     if (typeof window === 'undefined') return;
 
-    if (!webhookCriarUrl || !webhookEnviarUrl) {
+    if (!webhookCriarUrl.trim() || !webhookEnviarUrl.trim()) {
       toast({
         title: "Erro",
         description: "Por favor, insira ambas as URLs dos webhooks.",
@@ -126,7 +111,7 @@ const OrcamentoForm = ({ planilha, orcamento }: OrcamentoFormProps) => {
 
   const criarOrcamento = async () => {
     // Validação dos dados do cliente
-    if (!nomeCliente || !whatsapp || !email || !enderecoObra) {
+    if (!nomeCliente.trim() || !whatsapp.trim() || !email.trim() || !enderecoObra.trim()) {
       toast({
         title: "Erro",
         description: "Por favor, preencha todos os campos do cliente.",
@@ -138,11 +123,9 @@ const OrcamentoForm = ({ planilha, orcamento }: OrcamentoFormProps) => {
     setIsLoading(true);
 
     // Verificar se o webhook está configurado
-    const savedWebhookCriarUrl = typeof window !== 'undefined' 
-      ? localStorage.getItem("webhookCriarUrl") 
-      : webhookCriarUrl;
+    const urlWebhook = webhookCriarUrl || (typeof window !== 'undefined' ? localStorage.getItem("webhookCriarUrl") : null);
 
-    if (!savedWebhookCriarUrl) {
+    if (!urlWebhook) {
       toast({
         title: "Erro",
         description: "O administrador ainda não configurou a URL do webhook para criar orçamento.",
@@ -166,7 +149,7 @@ const OrcamentoForm = ({ planilha, orcamento }: OrcamentoFormProps) => {
     try {
       console.log("Criando nova planilha para o cliente:", dadosCliente);
 
-      await fetch(savedWebhookCriarUrl, {
+      await fetch(urlWebhook, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
