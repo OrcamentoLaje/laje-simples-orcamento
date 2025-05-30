@@ -18,7 +18,7 @@ const WebhookConfig = () => {
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="webhookCriar">Webhook para criar orçamento</Label>
+          <Label htmlFor="webhookCriar">criar orçamento</Label>
           <Input
             id="webhookCriar"
             type="url"
@@ -29,7 +29,7 @@ const WebhookConfig = () => {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="webhookEnviar">Webhook para enviar orçamento</Label>
+          <Label htmlFor="webhookEnviar">enviar orçamento</Label>
           <Input
             id="webhookEnviar"
             type="url"
