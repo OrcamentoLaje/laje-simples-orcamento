@@ -44,12 +44,45 @@ const OrcamentoForm = ({ planilha, orcamento }: OrcamentoFormProps) => {
       // Carregar webhooks salvos ou usar props
       const savedCriar = localStorage.getItem("webhookCriarUrl");
       const savedEnviar = localStorage.getItem("webhookEnviarUrl");
-      
+
       setWebhookCriarUrl(planilha || savedCriar || "");
       setWebhookEnviarUrl(orcamento || savedEnviar || "");
     }
   }, [planilha, orcamento]);
 
+  // Novo useEffect para buscar dados do webhookCriarUrl e preencher formulário
+  useEffect(() => {
+    async function fetchWebhookData() {
+      if (!webhookCriarUrl) return;
+
+      try {
+        const response = await fetch(webhookCriarUrl);
+        if (!response.ok) {
+          throw new Error(`Erro ao buscar dados: ${response.status}`);
+        }
+        const data = await response.json();
+
+        // Ajuste este caminho conforme a estrutura real do JSON recebido
+        if (data.cliente) {
+          setNomeCliente(data.cliente.nome || "");
+          setWhatsapp(data.cliente.whatsapp || "");
+          setEmail(data.cliente.email || "");
+          setEnderecoObra(data.cliente.enderecoObra || "");
+        }
+      } catch (error) {
+        console.error("Falha ao carregar dados do webhook:", error);
+        toast({
+          title: "Erro ao carregar dados",
+          description: "Não foi possível carregar os dados do webhook.",
+          variant: "destructive",
+        });
+      }
+    }
+
+    fetchWebhookData();
+  }, [webhookCriarUrl, toast]);
+
+  // restante do seu código continua igual...
   const verificarAdmin = () => {
     if (typeof window === 'undefined') return;
 
@@ -110,7 +143,6 @@ const OrcamentoForm = ({ planilha, orcamento }: OrcamentoFormProps) => {
   };
 
   const criarOrcamento = async () => {
-    // Validação dos dados do cliente
     if (!nomeCliente.trim() || !whatsapp.trim() || !email.trim() || !enderecoObra.trim()) {
       toast({
         title: "Erro",
@@ -122,7 +154,6 @@ const OrcamentoForm = ({ planilha, orcamento }: OrcamentoFormProps) => {
 
     setIsLoading(true);
 
-    // Verificar se o webhook está configurado
     const urlWebhook = webhookCriarUrl || (typeof window !== 'undefined' ? localStorage.getItem("webhookCriarUrl") : null);
 
     if (!urlWebhook) {
