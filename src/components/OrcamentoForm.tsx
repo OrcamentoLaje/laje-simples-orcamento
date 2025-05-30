@@ -85,11 +85,10 @@ const OrcamentoForm = ({ planilha, orcamento }: OrcamentoFormProps) => {
         }
       } catch (error) {
         console.error("Falha ao carregar dados do webhook:", error);
-        toast({
-          title: "Erro ao carregar dados",
-          description: "Não foi possível carregar os dados do webhook.",
-          variant: "destructive",
-        });
+
+        // Não mostrar erro ao usuário
+      console.warn("Falha ao carregar dados (silencioso)", error);
+
       }
     }
 
