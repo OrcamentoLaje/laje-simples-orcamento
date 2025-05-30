@@ -5,11 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Settings } from "lucide-react";
+import { Settings, CheckCircle } from "lucide-react";
 
 const WebhookConfig = () => {
   const [webhookCriar, setWebhookCriar] = useState("");
   const [webhookEnviar, setWebhookEnviar] = useState("");
+  const [linksAutoAtualizados, setLinksAutoAtualizados] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -17,8 +18,14 @@ const WebhookConfig = () => {
     const savedWebhookCriar = localStorage.getItem("webhookCriar");
     const savedWebhookEnviar = localStorage.getItem("webhookEnviar");
     
-    if (savedWebhookCriar) setWebhookCriar(savedWebhookCriar);
-    if (savedWebhookEnviar) setWebhookEnviar(savedWebhookEnviar);
+    if (savedWebhookCriar) {
+      setWebhookCriar(savedWebhookCriar);
+      setLinksAutoAtualizados(true);
+    }
+    if (savedWebhookEnviar) {
+      setWebhookEnviar(savedWebhookEnviar);
+      setLinksAutoAtualizados(true);
+    }
   }, []);
 
   const handleSave = () => {
@@ -37,6 +44,12 @@ const WebhookConfig = () => {
         <CardTitle className="flex items-center gap-2">
           <Settings className="w-5 h-5" />
           Configuração de Webhooks
+          {linksAutoAtualizados && (
+            <div className="flex items-center gap-1 text-green-600 text-sm">
+              <CheckCircle className="w-4 h-4" />
+              Links atualizados automaticamente
+            </div>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">

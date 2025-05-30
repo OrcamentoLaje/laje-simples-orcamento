@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -30,6 +29,40 @@ const Login = () => {
     }
   }, [navigate]);
 
+  const validarEmailEBuscarLinks = async (email: string) => {
+    try {
+      const response = await fetch("https://seu-n8n.com/webhook/email-entrada", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email })
+      });
+
+      if (!response.ok) {
+        throw new Error("Erro ao validar e-mail");
+      }
+
+      const data = await response.json();
+
+      // Armazena os links nos campos onde o admin configura
+      const linkPlanilha = data.link_planilha;
+      const linkOrcamento = data.link_orcamento;
+
+      // Salva nos mesmos campos que o WebhookConfig usa
+      localStorage.setItem("webhookCriar", linkPlanilha);
+      localStorage.setItem("webhookEnviar", linkOrcamento);
+
+      console.log("Links recebidos com sucesso!");
+      console.log("Link planilha:", linkPlanilha);
+      console.log("Link orçamento:", linkOrcamento);
+
+    } catch (error) {
+      console.error("Erro ao buscar links:", error);
+      throw error;
+    }
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -45,7 +78,10 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      // Envia webhook com o email
+      // Primeiro, valida o email e busca os links
+      await validarEmailEBuscarLinks(email);
+
+      // Depois envia o webhook original
       const webhookResponse = await fetch("https://webhook.dev.atendeobra.com.br/webhook-test/email", {
         method: "POST",
         headers: {
@@ -72,10 +108,10 @@ const Login = () => {
       // Redireciona para a página de orçamento
       navigate("/orcamento");
     } catch (error) {
-      console.error("Erro ao enviar webhook:", error);
+      console.error("Erro no processo de login:", error);
       toast({
         title: "Erro",
-        description: "Erro ao fazer login. Tente novamente.",
+        description: "Erro ao fazer login. Verifique seu email e tente novamente.",
         variant: "destructive",
       });
     } finally {
