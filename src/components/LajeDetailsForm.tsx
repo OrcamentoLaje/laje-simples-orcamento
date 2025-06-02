@@ -7,6 +7,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Plus, Send, ArrowLeft, Wrench, Grid3X3 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import PanoLaje from "./PanoLaje";
+import { useNavigate } from "react-router-dom";
 
 interface PanoData {
   id: string;
@@ -34,6 +35,8 @@ const LajeDetailsForm = ({
 }: LajeDetailsFormProps) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+
+  const navigate = useNavigate();
   
   // Dados da laje
   const [modeloLaje, setModeloLaje] = useState("");
@@ -145,9 +148,7 @@ const LajeDetailsForm = ({
         mode: "no-cors",
         body: JSON.stringify(dadosOrcamento),
       });
-
-      const navigate = useNavigate();
-      
+           
       toast({
         title: "Orçamento enviado com sucesso!",
         description: "Você receberá uma resposta por WhatsApp e e-mail em breve.",
