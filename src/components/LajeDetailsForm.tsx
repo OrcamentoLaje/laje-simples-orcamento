@@ -146,6 +146,8 @@ const LajeDetailsForm = ({
         body: JSON.stringify(dadosOrcamento),
       });
 
+      const navigate = useNavigate();
+      
       toast({
         title: "Orçamento enviado com sucesso!",
         description: "Você receberá uma resposta por WhatsApp e e-mail em breve.",
