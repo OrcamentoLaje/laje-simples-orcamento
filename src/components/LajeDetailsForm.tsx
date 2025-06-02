@@ -152,7 +152,7 @@ const LajeDetailsForm = ({
       });
 
       // Voltar para a primeira tela e limpar dados
-      onVoltar();
+      navigate("/login");
 
     } catch (error) {
       console.error("Erro ao enviar orçamento:", error);
