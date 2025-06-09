@@ -56,8 +56,8 @@ const LajeDetailsForm = ({
       quantidadeBarras: "",
       tipoAco: ""
     };
-    setPanos([...panos, novoPano]); // ← Esta é a linha alterada
-    //setPanos([novoPano, ...panos]);
+    //setPanos([...panos, novoPano]); // ← Esta é a linha alterada
+    setPanos([novoPano, ...panos]);
   };
 
   const atualizarPano = (id: string, dadosAtualizados: Partial<PanoData>) => {
@@ -113,13 +113,23 @@ const LajeDetailsForm = ({
     setIsLoading(true);
 
     // Converter os valores numéricos dos panos para decimais e adicionar nome do pano
-    const panosFormatados = panos.map((pano, index) => ({
+// Inverter a ordem para que a numeração fique correta (primeiro adicionado = Pano 1)
+    const panosFormatados = [...panos].reverse().map((pano, index) => ({
       ...pano,
       nome: `Pano ${index + 1}`,
       vao: pano.vao ? parseFloat(pano.vao) : 0,
       largura: pano.largura ? parseFloat(pano.largura) : 0,
       quantidadeBarras: pano.quantidadeBarras ? parseInt(pano.quantidadeBarras) : 0
     }));
+    
+    // Converter os valores numéricos dos panos para decimais e adicionar nome do pano
+    //const panosFormatados = panos.map((pano, index) => ({
+      //...pano,
+      //nome: `Pano ${index + 1}`,
+      //vao: pano.vao ? parseFloat(pano.vao) : 0,
+      //largura: pano.largura ? parseFloat(pano.largura) : 0,
+      //quantidadeBarras: pano.quantidadeBarras ? parseInt(pano.quantidadeBarras) : 0
+    //}));
 
     // Converter os valores numéricos dos panos para decimais
     //const panosFormatados = panos.map(pano => ({
