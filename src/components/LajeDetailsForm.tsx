@@ -56,7 +56,8 @@ const LajeDetailsForm = ({
       quantidadeBarras: "",
       tipoAco: ""
     };
-    setPanos([novoPano, ...panos]);
+    setPanos([...panos, novoPano]); // ← Esta é a linha alterada
+    //setPanos([novoPano, ...panos]);
   };
 
   const atualizarPano = (id: string, dadosAtualizados: Partial<PanoData>) => {
