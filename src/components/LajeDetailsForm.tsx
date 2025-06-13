@@ -372,6 +372,7 @@ const LajeDetailsForm = ({
                     totalPanos={panos.length}
                     onUpdate={(dados) => atualizarPano(pano.id, dados)}
                     onRemove={() => removerPano(pano.id)}
+                    displayLabel={pano.nome} // ← ADICIONAR ESTA LINHA
                   />
                 ))}
               </div>
