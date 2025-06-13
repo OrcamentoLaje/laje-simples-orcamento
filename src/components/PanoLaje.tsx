@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,8 +8,8 @@ import { Trash2 } from "lucide-react";
 
 interface PanoData {
   id: string;
-  nome: string; // ← ADICIONADO
-  numeroSequencial: number; // ← ADICIONADO
+  nome: string;
+  numeroSequencial: number;
   vao: string;
   largura: string;
   reforcoAdicional: boolean;
@@ -24,24 +23,22 @@ interface PanoLajeProps {
   totalPanos: number;
   onUpdate: (dados: Partial<PanoData>) => void;
   onRemove: () => void;
-  displayLabel?: string; // ← ADICIONADO
+  displayLabel?: string;
 }
 
-const PanoLaje = ({ pano, index, totalPanos, onUpdate, onRemove,  displayLabel }: PanoLajeProps) => {
+const PanoLaje = ({ pano, index, totalPanos, onUpdate, onRemove, displayLabel }: PanoLajeProps) => {
   const tiposAco = [
     { categoria: "CA60", opcoes: ["4.2mm", "5.0mm", "6.0mm", "7.0mm", "8.0mm"] },
     { categoria: "CA50", opcoes: ["6.3mm", "8.0mm", "10.0mm", "12.5mm", "16mm"] }
   ];
 
-  // Calcula o número do pano na sequência ascendente
-  //const panelNumber = totalPanos - index;
+  // Calcula o título do pano
   const panelTitle = displayLabel || `Pano ${totalPanos - index}`;
-   <CardTitle className="text-lg">{panelTitle}</CardTitle>
 
   return (
     <Card className="border-l-4 border-l-blue-500">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-lg">Pano {panelNumber}</CardTitle>
+        <CardTitle className="text-lg">{panelTitle}</CardTitle>
         <Button
           variant="ghost"
           size="sm"
