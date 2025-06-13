@@ -362,35 +362,21 @@ const LajeDetailsForm = ({
                 <p>Clique em "Adicionar Pano" para começar</p>
               </div>
             ) : (
-
-              <div className="space-y-4">
-                {panos
-                  .sort((a, b) => a.numeroSequencial - b.numeroSequencial)
-                  .map((pano) => (
-                    <PanoLaje
-                      key={pano.id}
-                      pano={pano}
-                      index={pano.numeroSequencial - 1}
-                      totalPanos={panos.length}
-                      onUpdate={(dados) => atualizarPano(pano.id, dados)}
-                      onRemove={() => removerPano(pano.id)}
-                    />
-                  ))}
+              
+             <div className="space-y-4">
+                {panos.map((pano, index) => (
+                  <PanoLaje
+                    key={pano.id}
+                    pano={pano}
+                    index={index}
+                    totalPanos={panos.length}
+                    onUpdate={(dados) => atualizarPano(pano.id, dados)}
+                    onRemove={() => removerPano(pano.id)}
+                  />
+                ))}
               </div>
-      
-              //<div className="space-y-4">
-                //{panos.map((pano, index) => (
-                  //<PanoLaje
-                    //key={pano.id}
-                    //pano={pano}
-                    //index={index}
-                    //totalPanos={panos.length}
-                    //onUpdate={(dados) => atualizarPano(pano.id, dados)}
-                    //onRemove={() => removerPano(pano.id)}
-                  ///>
-                //))}
-              //</div>
             )}
+            
           </CardContent>
         </Card>
 
