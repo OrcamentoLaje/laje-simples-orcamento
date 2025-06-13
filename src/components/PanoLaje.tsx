@@ -36,7 +36,7 @@ const PanoLaje = ({ pano, index, totalPanos, onUpdate, onRemove,  displayLabel }
   // Calcula o número do pano na sequência ascendente
   //const panelNumber = totalPanos - index;
   const panelTitle = displayLabel || `Pano ${totalPanos - index}`;
- <CardTitle className="text-lg">{panelTitle}</CardTitle>
+   <CardTitle className="text-lg">{panelTitle}</CardTitle>
 
   return (
     <Card className="border-l-4 border-l-blue-500">
