@@ -9,8 +9,21 @@ import { useToast } from "@/hooks/use-toast";
 import PanoLaje from "./PanoLaje";
 import { useNavigate } from "react-router-dom";
 
+//ANTIGO CODIGO PANO
+//interface PanoData {
+  //id: string;
+  //vao: string;
+  //largura: string;
+  //reforcoAdicional: boolean;
+  //quantidadeBarras: string;
+  //tipoAco: string;
+//}
+
+//NOVO CODIGO PANO
 interface PanoData {
   id: string;
+  nome: string; // ← NOVO
+  numeroSequencial: number; // ← NOVO
   vao: string;
   largura: string;
   reforcoAdicional: boolean;
@@ -46,18 +59,35 @@ const LajeDetailsForm = ({
   
   // Panos de laje
   const [panos, setPanos] = useState<PanoData[]>([]);
+  // ADICIONADO:
+  const [proximoNumero, setProximoNumero] = useState(1);
 
   const adicionarPano = () => {
+    //NOVO NOVO PANO
     const novoPano: PanoData = {
       id: Date.now().toString(),
+      nome: `L${proximoNumero}`, // ← NOVO
+      numeroSequencial: proximoNumero, // ← NOVO
       vao: "",
       largura: "",
       reforcoAdicional: false,
       quantidadeBarras: "",
       tipoAco: ""
     };
+
+    //ANTIGO NOVO PANO
+    //const novoPano: PanoData = {
+      //id: Date.now().toString(),
+      //vao: "",
+      //largura: "",
+      //reforcoAdicional: false,
+      //quantidadeBarras: "",
+      //tipoAco: ""
+    //};
+    
     //setPanos([...panos, novoPano]); // ← Esta é a linha alterada
     setPanos([novoPano, ...panos]);
+    setProximoNumero(proximoNumero + 1); //ADICIONADO
   };
 
   const atualizarPano = (id: string, dadosAtualizados: Partial<PanoData>) => {
@@ -114,13 +144,23 @@ const LajeDetailsForm = ({
 
     // Converter os valores numéricos dos panos para decimais e adicionar nome do pano
 // Inverter a ordem para que a numeração fique correta (primeiro adicionado = Pano 1)
-    const panosFormatados = [...panos].reverse().map((pano, index) => ({
-      ...pano,
-      nome: `Pano ${index + 1}`,
-      vao: pano.vao ? parseFloat(pano.vao) : 0,
-      largura: pano.largura ? parseFloat(pano.largura) : 0,
-      quantidadeBarras: pano.quantidadeBarras ? parseInt(pano.quantidadeBarras) : 0
-    }));
+    //const panosFormatados = [...panos].reverse().map((pano, index) => ({
+      //...pano,
+      //nome: `Pano ${index + 1}`,
+      //vao: pano.vao ? parseFloat(pano.vao) : 0,
+      //largura: pano.largura ? parseFloat(pano.largura) : 0,
+      //quantidadeBarras: pano.quantidadeBarras ? parseInt(pano.quantidadeBarras) : 0
+    //}));
+
+    // DEPOIS:
+  const panosOrdenados = [...panos].sort((a, b) => a.numeroSequencial - b.numeroSequencial);
+  const panosFormatados = panosOrdenados.map((pano) => ({
+  ...pano,
+  vao: pano.vao ? parseFloat(pano.vao) : 0,
+  largura: pano.largura ? parseFloat(pano.largura) : 0,
+  quantidadeBarras: pano.quantidadeBarras ? parseInt(pano.quantidadeBarras) : 0
+}));
+    
     
     // Converter os valores numéricos dos panos para decimais e adicionar nome do pano
     //const panosFormatados = panos.map((pano, index) => ({
