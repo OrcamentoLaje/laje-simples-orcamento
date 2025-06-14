@@ -165,7 +165,7 @@ const OrcamentoForm = ({ planilha, orcamento }: OrcamentoFormProps) => {
     setIsLoading(true);
 
     try {
-      const dadosCliente = {
+     /* const dadosCliente = {
         acao: "criar_planilha",
         cliente: { nome: nomeCliente, whatsapp, email, enderecoObra },
         timestamp: new Date().toISOString(),
@@ -179,6 +179,7 @@ const OrcamentoForm = ({ planilha, orcamento }: OrcamentoFormProps) => {
         mode: "no-cors",
         body: JSON.stringify(dadosCliente),
       });
+    */
 
       toast({
         title: "Orçamento criado",
