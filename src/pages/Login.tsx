@@ -41,7 +41,7 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch("https://webhook.dev.atendeobra.com.br/webhook/email", {
+      const response = await fetch("https://webhook.dev.atendeobra.com.br/webhook-test/email", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
