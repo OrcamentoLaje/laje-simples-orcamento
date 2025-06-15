@@ -217,7 +217,7 @@ const LajeDetailsForm = ({
 
        // Limpar todos os dados salvos após envio bem-sucedido
       localStorage.removeItem("userEmail");
-      localStorage.removeItem("keepLogin");
+      //localStorage.removeItem("keepLogin");
       localStorage.removeItem("webhookCriarUrl");
       localStorage.removeItem("webhookEnviarUrl");
   
