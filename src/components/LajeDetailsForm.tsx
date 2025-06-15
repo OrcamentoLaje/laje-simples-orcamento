@@ -180,6 +180,7 @@ const LajeDetailsForm = ({
     //}));
 
     const dadosOrcamento = {
+       emailUsuario: localStorage.getItem("userEmail"),  // ← ADICIONE SÓ ISSO!
       acao: "finalizar_orcamento",
       cliente: {
         nome: nomeCliente,
