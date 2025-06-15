@@ -215,6 +215,12 @@ const LajeDetailsForm = ({
         description: "Você receberá uma resposta por WhatsApp e e-mail em breve.",
       });
 
+       // Limpar todos os dados salvos após envio bem-sucedido
+      localStorage.removeItem("userEmail");
+      localStorage.removeItem("keepLogin");
+      localStorage.removeItem("webhookCriarUrl");
+      localStorage.removeItem("webhookEnviarUrl");
+  
       // Voltar para a primeira tela e limpar dados
       navigate("/transicao");
 
