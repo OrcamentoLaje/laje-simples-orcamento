@@ -216,10 +216,10 @@ const LajeDetailsForm = ({
       });
 
        // Limpar todos os dados salvos após envio bem-sucedido
-      localStorage.removeItem("userEmail");
+      //localStorage.removeItem("userEmail");
       //localStorage.removeItem("keepLogin");
-      localStorage.removeItem("webhookCriarUrl");
-      localStorage.removeItem("webhookEnviarUrl");
+      //localStorage.removeItem("webhookCriarUrl");
+      //localStorage.removeItem("webhookEnviarUrl");
   
       // Voltar para a primeira tela e limpar dados
       navigate("/transicao");
