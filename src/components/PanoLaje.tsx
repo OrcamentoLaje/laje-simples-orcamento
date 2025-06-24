@@ -15,6 +15,7 @@ interface PanoData {
   reforcoAdicional: boolean;
   quantidadeBarras: string;
   tipoAco: string;
+  precoReforco?: string; // ← ADICIONAR ESTA LINHA
 }
 
 interface PanoLajeProps {
@@ -125,6 +126,26 @@ const PanoLaje = ({ pano, index, totalPanos, onUpdate, onRemove, displayLabel }:
                 </SelectContent>
               </Select>
             </div>
+            
+            {/* Campo de preço do reforço adicional */}
+            <div>
+              <Label htmlFor={`preco-reforco-${pano.id}`}>Preço R$ m</Label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">R$</span>
+                <Input
+                  id={`preco-reforco-${pano.id}`}
+                  type="text"
+                  placeholder="0,00"
+                  value={pano.precoReforco || ''}
+                  onChange={(e) => {
+                    const valorFormatado = e.target.value.replace(/[^\d.,]/g, '').replace(',', '.');
+                    onUpdate({ precoReforco: valorFormatado });
+                  }}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+            
           </div>
         )}
       </CardContent>
