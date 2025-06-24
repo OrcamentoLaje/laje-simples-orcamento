@@ -8,6 +8,7 @@ import { Plus, Send, ArrowLeft, Wrench, Grid3X3 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import PanoLaje from "./PanoLaje";
 import { useNavigate } from "react-router-dom";
+import { Input } from "@/components/ui/input"; //adicionado
 
 //ANTIGO CODIGO PANO
 //interface PanoData {
@@ -29,6 +30,7 @@ interface PanoData {
   reforcoAdicional: boolean;
   quantidadeBarras: string;
   tipoAco: string;
+  precoReforco?: string; // ← ADICIONAR ESTA LINHA
 }
 
 interface LajeDetailsFormProps {
@@ -54,14 +56,25 @@ const LajeDetailsForm = ({
   // Dados da laje
   const [modeloLaje, setModeloLaje] = useState("");
   const [tipoLaje, setTipoLaje] = useState("");
+  const [precoLaje, setPrecoLaje] = useState(""); // ← ADICIONAR
   const [incluirTela, setIncluirTela] = useState("");
   const [tipoTela, setTipoTela] = useState("");
+  const [precoTela, setPrecoTela] = useState(""); // ← ADICIONAR
   
   // Panos de laje
   const [panos, setPanos] = useState<PanoData[]>([]);
   // ADICIONADO:
   const [proximoNumero, setProximoNumero] = useState(1);
 
+  // Função para formatar valor monetário
+  const formatarValorMonetario = (valor: string) => {
+    // Remove caracteres não numéricos exceto vírgula e ponto
+    let valorLimpo = valor.replace(/[^\d.,]/g, '');
+    // Substitui vírgula por ponto para cálculo
+    valorLimpo = valorLimpo.replace(',', '.');
+    return valorLimpo;
+  };
+  
   const adicionarPano = () => {
     //NOVO NOVO PANO
     const novoPano: PanoData = {
@@ -72,7 +85,8 @@ const LajeDetailsForm = ({
       largura: "",
       reforcoAdicional: false,
       quantidadeBarras: "",
-      tipoAco: ""
+      tipoAco: "",
+      precoReforco: "" // ← ADICIONAR ESTA LINHA
     };
 
     //ANTIGO NOVO PANO
@@ -158,7 +172,8 @@ const LajeDetailsForm = ({
   ...pano,
   vao: pano.vao ? parseFloat(pano.vao) : 0,
   largura: pano.largura ? parseFloat(pano.largura) : 0,
-  quantidadeBarras: pano.quantidadeBarras ? parseInt(pano.quantidadeBarras) : 0
+  quantidadeBarras: pano.quantidadeBarras ? parseInt(pano.quantidadeBarras) : 0,
+  precoReforco: pano.precoReforco ? parseFloat(pano.precoReforco) : undefined // ← ADICIONAR
 }));
     
     
@@ -188,12 +203,21 @@ const LajeDetailsForm = ({
         email: email,
         enderecoObra: enderecoObra
       },
+      
       laje: {
         modelo: modeloLaje,
         tipo: tipoLaje,
+        precoM2: precoLaje ? parseFloat(precoLaje) : 0, // ← ADICIONAR
         incluirTela: incluirTela,
-        tipoTela: incluirTela === "sim" ? tipoTela : null
+        tipoTela: incluirTela === "sim" ? tipoTela : null,
+        precoPeca: incluirTela === "sim" && precoTela ? parseFloat(precoTela) : undefined // ← ADICIONAR
       },
+      //laje: {
+        //modelo: modeloLaje,
+        //tipo: tipoLaje,
+        //incluirTela: incluirTela,
+        //tipoTela: incluirTela === "sim" ? tipoTela : null
+      //},
       panos: panosFormatados,
       timestamp: new Date().toISOString()
     };
@@ -303,6 +327,22 @@ const LajeDetailsForm = ({
               </div>
             </div>
 
+            {/* NOVO - Campo de Preço da Laje */}
+            <div>
+              <Label htmlFor="preco-laje" className="text-base font-medium text-gray-700">Preço R$ m²</Label>
+              <div className="relative mt-2">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">R$</span>
+                <Input
+                  id="preco-laje"
+                  type="text"
+                  placeholder="0,00"
+                  value={precoLaje}
+                  onChange={(e) => setPrecoLaje(formatarValorMonetario(e.target.value))}
+                  className="pl-10 h-12"
+                />
+              </div>
+            </div>
+
             {/* Incluir Tela */}
             <div>
               <Label className="text-base font-medium text-gray-700 mb-3 block">
@@ -321,23 +361,63 @@ const LajeDetailsForm = ({
             </div>
 
             {/* Tipo de Tela (condicional) */}
+
+            {/* Tipo de Tela e Preço (condicional) */}
             {incluirTela === "sim" && (
-              <div>
-                <Label className="text-base font-medium text-gray-700">Tipo de Tela</Label>
-                <Select value={tipoTela} onValueChange={setTipoTela}>
-                  <SelectTrigger className="mt-2 h-12">
-                    <SelectValue placeholder="Selecione o tipo de tela" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Q45">Tela Q45</SelectItem>
-                    <SelectItem value="Q61">Tela Q61</SelectItem>
-                    <SelectItem value="Q92">Tela Q92</SelectItem>
-                    <SelectItem value="Q138">Tela Q138</SelectItem>
-                    <SelectItem value="Q196">Tela Q196</SelectItem>
-                  </SelectContent>
-                </Select>
+              <div className="space-y-6 bg-gray-50 p-4 rounded-lg">
+                <div>
+                  <Label className="text-base font-medium text-gray-700">Tipo de Tela</Label>
+                  <Select value={tipoTela} onValueChange={setTipoTela}>
+                    <SelectTrigger className="mt-2 h-12">
+                      <SelectValue placeholder="Selecione o tipo de tela" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Q45">Tela Q45</SelectItem>
+                      <SelectItem value="Q61">Tela Q61</SelectItem>
+                      <SelectItem value="Q92">Tela Q92</SelectItem>
+                      <SelectItem value="Q138">Tela Q138</SelectItem>
+                      <SelectItem value="Q196">Tela Q196</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+            
+                {/* NOVO - Campo de Preço da Tela */}
+                <div>
+                  <Label htmlFor="preco-tela" className="text-base font-medium text-gray-700">Preço R$ pç</Label>
+                  <div className="relative mt-2">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">R$</span>
+                    <Input
+                      id="preco-tela"
+                      type="text"
+                      placeholder="0,00"
+                      value={precoTela}
+                      onChange={(e) => setPrecoTela(formatarValorMonetario(e.target.value))}
+                      className="pl-10 h-12"
+                    />
+                  </div>
+                </div>
               </div>
             )}
+                        
+            //{incluirTela === "sim" && (
+              //<div>
+                //<Label className="text-base font-medium text-gray-700">Tipo de Tela</Label>
+                //<Select value={tipoTela} onValueChange={setTipoTela}>
+                  //<SelectTrigger className="mt-2 h-12">
+                    //<SelectValue placeholder="Selecione o tipo de tela" />
+                  //</SelectTrigger>
+                  //<SelectContent>
+                    //<SelectItem value="Q45">Tela Q45</SelectItem>
+                    //<SelectItem value="Q61">Tela Q61</SelectItem>
+                    //<SelectItem value="Q92">Tela Q92</SelectItem>
+                    //<SelectItem value="Q138">Tela Q138</SelectItem>
+                    //<SelectItem value="Q196">Tela Q196</SelectItem>
+                  //</SelectContent>
+                //</Select>
+              //</div>
+            //)}
+
+      
           </CardContent>
         </Card>
 
