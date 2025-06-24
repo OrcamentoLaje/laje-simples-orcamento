@@ -398,26 +398,8 @@ const LajeDetailsForm = ({
                 </div>
               </div>
             )}
-                        
-            //{incluirTela === "sim" && (
-              //<div>
-                //<Label className="text-base font-medium text-gray-700">Tipo de Tela</Label>
-                //<Select value={tipoTela} onValueChange={setTipoTela}>
-                  //<SelectTrigger className="mt-2 h-12">
-                    //<SelectValue placeholder="Selecione o tipo de tela" />
-                  //</SelectTrigger>
-                  //<SelectContent>
-                    //<SelectItem value="Q45">Tela Q45</SelectItem>
-                    //<SelectItem value="Q61">Tela Q61</SelectItem>
-                    //<SelectItem value="Q92">Tela Q92</SelectItem>
-                    //<SelectItem value="Q138">Tela Q138</SelectItem>
-                    //<SelectItem value="Q196">Tela Q196</SelectItem>
-                  //</SelectContent>
-                //</Select>
-              //</div>
-            //)}
-
-      
+                     
+                
           </CardContent>
         </Card>
 
