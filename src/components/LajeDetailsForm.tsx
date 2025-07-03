@@ -494,10 +494,7 @@ const LajeDetailsForm = ({
           </CardContent>
         </Card>
 
-        // 6. ADICIONE O JSX DO CARD DE PRODUTOS AVULSOS
-// Adicione este código APÓS o Card dos Panos de Laje e ANTES do botão de envio
-
-{/* Produtos Avulsos */}
+  {/* Produtos Avulsos */}
 <Card className="shadow-xl border-0 overflow-hidden mt-6">
   <CardHeader className="bg-gradient-to-r from-amber-600 to-orange-600 text-white">
     <CardTitle className="flex items-center gap-3 text-xl">
