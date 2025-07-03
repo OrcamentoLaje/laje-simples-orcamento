@@ -37,7 +37,7 @@ interface PanoData {
   precoReforco?: string; // ← ADICIONAR ESTA LINHA
 }
 
-/ 2. ADICIONE A INTERFACE (após a interface PanoData)
+// 2. ADICIONE A INTERFACE (após a interface PanoData)
 interface ProdutoAvulso {
   id: string;
   nome: string;
