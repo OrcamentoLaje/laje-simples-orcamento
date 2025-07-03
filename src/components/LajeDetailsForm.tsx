@@ -131,26 +131,26 @@ const LajeDetailsForm = ({
     setPanos(panos.filter(pano => pano.id !== id));
   };
 
-  // 4. ADICIONE AS FUNÇÕES (após a função removerPano)
-  const adicionarProdutoAvulso = () => {
-    const novoProduto: ProdutoAvulso = {
-      id: Date.now().toString(),
-      nome: "",
-      quantidade: 1,
-      valorUnitario: ""
-    };
-    setProdutosAvulsos([...produtosAvulsos, novoProduto]);
+// 4. ADICIONE AS FUNÇÕES (após a função removerPano)
+const adicionarProdutoAvulso = () => {
+  const novoProduto: ProdutoAvulso = {
+    id: Date.now().toString(),
+    nome: "",
+    quantidade: 1,
+    valorUnitario: ""
   };
+  setProdutosAvulsos([...produtosAvulsos, novoProduto]);
+};
 
-    const atualizarProdutoAvulso = (id: string, dadosAtualizados: Partial<ProdutoAvulso>) => {
-    setProdutosAvulsos(produtosAvulsos.map(produto => 
-      produto.id === id ? { ...produto, ...dadosAtualizados } : produto
-    ));
-  };
+const atualizarProdutoAvulso = (id: string, dadosAtualizados: Partial<ProdutoAvulso>) => {
+  setProdutosAvulsos(produtosAvulsos.map(produto => 
+    produto.id === id ? { ...produto, ...dadosAtualizados } : produto
+  ));
+};
 
-  const removerProdutoAvulso = (id: string) => {
-    setProdutosAvulsos(produtosAvulsos.filter(produto => produto.id !== id));
-  };
+const removerProdutoAvulso = (id: string) => {
+  setProdutosAvulsos(produtosAvulsos.filter(produto => produto.id !== id));
+};
 
   const enviarOrcamento = async () => {
     // Validação básica
@@ -494,34 +494,34 @@ const LajeDetailsForm = ({
           </CardContent>
         </Card>
 
-  {/* Produtos Avulsos */}
+  {/* Materiais Avulsos */}
 <Card className="shadow-xl border-0 overflow-hidden mt-6">
   <CardHeader className="bg-gradient-to-r from-amber-600 to-orange-600 text-white">
     <CardTitle className="flex items-center gap-3 text-xl">
       <Package className="w-6 h-6" />
-      Produtos Avulsos
+      Materiais Avulsos
     </CardTitle>
   </CardHeader>
   
   <CardContent className="p-6 space-y-6">
-    {/* Opção de incluir produtos avulsos */}
+    {/* Opção de incluir materiais avulsos */}
     <div>
       <Label className="text-base font-medium text-gray-700 mb-3 block">
-        Deseja incluir produtos avulsos?
+        Deseja incluir materiais avulsos?
       </Label>
       <RadioGroup value={incluirProdutosAvulsos} onValueChange={setIncluirProdutosAvulsos} className="flex gap-8">
         <div className="flex items-center space-x-2">
-          <RadioGroupItem value="sim" id="produtos-sim" />
-          <Label htmlFor="produtos-sim" className="text-base">Sim</Label>
+          <RadioGroupItem value="sim" id="materiais-sim" />
+          <Label htmlFor="materiais-sim" className="text-base">Sim</Label>
         </div>
         <div className="flex items-center space-x-2">
-          <RadioGroupItem value="nao" id="produtos-nao" />
-          <Label htmlFor="produtos-nao" className="text-base">Não</Label>
+          <RadioGroupItem value="nao" id="materiais-nao" />
+          <Label htmlFor="materiais-nao" className="text-base">Não</Label>
         </div>
       </RadioGroup>
     </div>
 
-    {/* Lista de produtos avulsos (condicional) */}
+    {/* Lista de materiais avulsos (condicional) */}
     {incluirProdutosAvulsos === "sim" && (
       <div className="space-y-4">
         <Button 
@@ -531,21 +531,23 @@ const LajeDetailsForm = ({
           className="w-full border-2 border-dashed border-amber-300 hover:border-amber-400 text-amber-600 hover:text-amber-700"
         >
           <Plus className="w-4 h-4 mr-2" />
-          Adicionar Produto
+          Adicionar Material
         </Button>
 
         {produtosAvulsos.length === 0 ? (
-          <div className="text-center py-8 text-gray-500 border-2 border-dashed border-gray-300 rounded-lg">
+          <div className="text-center py-12 text-gray-500 border-2 border-dashed border-gray-300 rounded-lg">
             <Package className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-            <p className="text-lg font-medium mb-2">Nenhum produto adicionado</p>
-            <p className="text-sm">Clique em "Adicionar Produto" para incluir produtos avulsos</p>
+            <p className="text-lg font-medium mb-2">Nenhum material adicionado</p>
+            <p className="text-sm">Clique em "Adicionar Material" para incluir materiais avulsos</p>
           </div>
         ) : (
           <div className="space-y-4">
-            {produtosAvulsos.map((produto) => (
+            {produtosAvulsos.map((produto, index) => (
               <ProdutoAvulsoItem
                 key={produto.id}
                 produto={produto}
+                index={index}
+                totalProdutos={produtosAvulsos.length}
                 onUpdate={(dados) => atualizarProdutoAvulso(produto.id, dados)}
                 onRemove={() => removerProdutoAvulso(produto.id)}
               />
