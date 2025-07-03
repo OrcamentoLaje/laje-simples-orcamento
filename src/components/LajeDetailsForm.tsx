@@ -1,3 +1,7 @@
+// 1. ADICIONE NO IMPORT (no topo do arquivo, junto com os outros imports)
+import ProdutoAvulsoItem from "./ProdutoAvulsoItem";
+import { Plus, Send, ArrowLeft, Wrench, Grid3X3, Package } from "lucide-react"; // Adicione Package
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -33,6 +37,14 @@ interface PanoData {
   precoReforco?: string; // ← ADICIONAR ESTA LINHA
 }
 
+/ 2. ADICIONE A INTERFACE (após a interface PanoData)
+interface ProdutoAvulso {
+  id: string;
+  nome: string;
+  quantidade: number;
+  valorUnitario: string;
+}
+
 interface LajeDetailsFormProps {
   nomeCliente: string;
   whatsapp: string;
@@ -65,6 +77,11 @@ const LajeDetailsForm = ({
   const [panos, setPanos] = useState<PanoData[]>([]);
   // ADICIONADO:
   const [proximoNumero, setProximoNumero] = useState(1);
+
+  // 3. ADICIONE OS ESTADOS (após os outros useState, por volta da linha 60)
+  const [incluirProdutosAvulsos, setIncluirProdutosAvulsos] = useState("");
+  const [produtosAvulsos, setProdutosAvulsos] = useState<ProdutoAvulso[]>([]);
+
 
   // Função para formatar valor monetário
   const formatarValorMonetario = (valor: string) => {
@@ -112,6 +129,27 @@ const LajeDetailsForm = ({
 
   const removerPano = (id: string) => {
     setPanos(panos.filter(pano => pano.id !== id));
+  };
+
+  // 4. ADICIONE AS FUNÇÕES (após a função removerPano)
+  const adicionarProdutoAvulso = () => {
+    const novoProduto: ProdutoAvulso = {
+      id: Date.now().toString(),
+      nome: "",
+      quantidade: 1,
+      valorUnitario: ""
+    };
+    setProdutosAvulsos([...produtosAvulsos, novoProduto]);
+  };
+
+    const atualizarProdutoAvulso = (id: string, dadosAtualizados: Partial<ProdutoAvulso>) => {
+    setProdutosAvulsos(produtosAvulsos.map(produto => 
+      produto.id === id ? { ...produto, ...dadosAtualizados } : produto
+    ));
+  };
+
+  const removerProdutoAvulso = (id: string) => {
+    setProdutosAvulsos(produtosAvulsos.filter(produto => produto.id !== id));
   };
 
   const enviarOrcamento = async () => {
@@ -175,7 +213,12 @@ const LajeDetailsForm = ({
   quantidadeBarras: pano.quantidadeBarras ? parseInt(pano.quantidadeBarras) : 0,
   precoReforco: pano.precoReforco ? parseFloat(pano.precoReforco) : undefined // ← ADICIONAR
 }));
-    
+
+    const produtosFormatados = produtosAvulsos.map(produto => ({
+  ...produto,
+  quantidade: produto.quantidade,
+  valorUnitario: produto.valorUnitario ? parseFloat(produto.valorUnitario.replace(',', '.')) : 0
+}));
     
     // Converter os valores numéricos dos panos para decimais e adicionar nome do pano
     //const panosFormatados = panos.map((pano, index) => ({
@@ -219,6 +262,7 @@ const LajeDetailsForm = ({
         //tipoTela: incluirTela === "sim" ? tipoTela : null
       //},
       panos: panosFormatados,
+      produtosAvulsos: incluirProdutosAvulsos === "sim" ? produtosFormatados : [], // ADICIONE ESTA LINHA
       timestamp: new Date().toISOString()
     };
 
@@ -449,6 +493,72 @@ const LajeDetailsForm = ({
             
           </CardContent>
         </Card>
+
+        // 6. ADICIONE O JSX DO CARD DE PRODUTOS AVULSOS
+// Adicione este código APÓS o Card dos Panos de Laje e ANTES do botão de envio
+
+{/* Produtos Avulsos */}
+<Card className="shadow-xl border-0 overflow-hidden mt-6">
+  <CardHeader className="bg-gradient-to-r from-amber-600 to-orange-600 text-white">
+    <CardTitle className="flex items-center gap-3 text-xl">
+      <Package className="w-6 h-6" />
+      Produtos Avulsos
+    </CardTitle>
+  </CardHeader>
+  
+  <CardContent className="p-6 space-y-6">
+    {/* Opção de incluir produtos avulsos */}
+    <div>
+      <Label className="text-base font-medium text-gray-700 mb-3 block">
+        Deseja incluir produtos avulsos?
+      </Label>
+      <RadioGroup value={incluirProdutosAvulsos} onValueChange={setIncluirProdutosAvulsos} className="flex gap-8">
+        <div className="flex items-center space-x-2">
+          <RadioGroupItem value="sim" id="produtos-sim" />
+          <Label htmlFor="produtos-sim" className="text-base">Sim</Label>
+        </div>
+        <div className="flex items-center space-x-2">
+          <RadioGroupItem value="nao" id="produtos-nao" />
+          <Label htmlFor="produtos-nao" className="text-base">Não</Label>
+        </div>
+      </RadioGroup>
+    </div>
+
+    {/* Lista de produtos avulsos (condicional) */}
+    {incluirProdutosAvulsos === "sim" && (
+      <div className="space-y-4">
+        <Button 
+          onClick={adicionarProdutoAvulso} 
+          variant="outline" 
+          size="sm"
+          className="w-full border-2 border-dashed border-amber-300 hover:border-amber-400 text-amber-600 hover:text-amber-700"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          Adicionar Produto
+        </Button>
+
+        {produtosAvulsos.length === 0 ? (
+          <div className="text-center py-8 text-gray-500 border-2 border-dashed border-gray-300 rounded-lg">
+            <Package className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+            <p className="text-lg font-medium mb-2">Nenhum produto adicionado</p>
+            <p className="text-sm">Clique em "Adicionar Produto" para incluir produtos avulsos</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {produtosAvulsos.map((produto) => (
+              <ProdutoAvulsoItem
+                key={produto.id}
+                produto={produto}
+                onUpdate={(dados) => atualizarProdutoAvulso(produto.id, dados)}
+                onRemove={() => removerProdutoAvulso(produto.id)}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    )}
+  </CardContent>
+</Card>
 
         {/* Botão de Envio */}
         <div className="mt-8">
