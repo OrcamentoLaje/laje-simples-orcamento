@@ -107,7 +107,7 @@ const ProdutoAvulsoItem = ({ produto, index, totalProdutos, onUpdate, onRemove }
             value={produto.quantidade}
             onChange={(e) => onUpdate({ quantidade: parseInt(e.target.value) || 1 })}
             className="mt-1 bg-white"
-            placeholder="1"
+            placeholder="0"
           />
         </div>
 
