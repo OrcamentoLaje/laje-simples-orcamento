@@ -103,7 +103,7 @@ const ProdutoAvulsoItem = ({ produto, index, totalProdutos, onUpdate, onRemove }
           <Input
             id={`quantidade-${produto.id}`}
             type="number"
-            min="1"
+            min="0"
             value={produto.quantidade}
             onChange={(e) => onUpdate({ quantidade: parseInt(e.target.value) || 1 })}
             className="mt-1 bg-white"
