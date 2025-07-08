@@ -21,27 +21,27 @@ interface ProdutoAvulsoItemProps {
 }
 
 const PRODUTOS_DISPONIVEIS = [
-  "Lajota cerâmica",
-  "EPS",
-  "Vigota treliçada",
-  "Treliça H8",
-  "Treliça H12",
-  "Treliça H16",
-  "Laje pré-moldada H8 m²",
-  "Laje pré-moldada H12 m²",
-  "Laje pré-moldada com reforço",
-  "Caixa de luz de teto",
-  "Canaleta nervura laje",
-  "Tela Q45 20x20 3.4-2x3",
-  "Tela Q61 15x15 3.4-2x3",
-  "Tela Q69 20x20 4.2-2x3",
-  "Tela Q92 15x15 4.2-2x3",
-  "Tela Q138 10x10 4.2-2x3",
-  "Tela Q196 10x10 5.0-2x3",
-  "Tela Q61 15x15 3.4-2,45x6",
-  "Tela Q92 15x15 4.2-2,45x6",
-  "Tela Q138 10x10 4.2-2,45x6",
-  "Tela Q196 10x10 5.0-2,45x6"
+  "Lajota cerâmica (pç)",
+  "EPS (pç)",
+  "Vigota treliçada (m)",
+  "Treliça H8 (m)",
+  "Treliça H12 (m)",
+  "Treliça H16 (m)",
+  "Laje pré-moldada H8 (m²)",
+  "Laje pré-moldada H12 (m²)",
+  "Laje pré-moldada com reforço (m²)",
+  "Caixa de luz de teto (pç)",
+  "Canaleta nervura laje (pç)",
+  "Tela Q45 20x20 3.4-2x3 (pç)",
+  "Tela Q61 15x15 3.4-2x3 (pç)",
+  "Tela Q69 20x20 4.2-2x3 (pç)",
+  "Tela Q92 15x15 4.2-2x3 (pç)",
+  "Tela Q138 10x10 4.2-2x3 (pç)",
+  "Tela Q196 10x10 5.0-2x3 (pç)",
+  "Tela Q61 15x15 3.4-2,45x6 (pç)",
+  "Tela Q92 15x15 4.2-2,45x6 (pç)",
+  "Tela Q138 10x10 4.2-2,45x6 (pç)",
+  "Tela Q196 10x10 5.0-2,45x6 (pç)"
 ];
 
 const ProdutoAvulsoItem = ({ produto, index, totalProdutos, onUpdate, onRemove }: ProdutoAvulsoItemProps) => {
