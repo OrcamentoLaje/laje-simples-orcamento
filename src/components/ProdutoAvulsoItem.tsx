@@ -112,7 +112,7 @@ const ProdutoAvulsoItem = ({ produto, index, totalProdutos, onUpdate, onRemove }
           </Select>
         </div>
 
-        {/* Quantidade */}
+      {/* Quantidade */}
         <div>
           <Label htmlFor={`quantidade-${produto.id}`} className="text-sm font-medium text-gray-700">
             Quantidade
@@ -121,8 +121,8 @@ const ProdutoAvulsoItem = ({ produto, index, totalProdutos, onUpdate, onRemove }
             id={`quantidade-${produto.id}`}
             type="number"
             min="0"
-            value={produto.quantidade}
-            onChange={(e) => onUpdate({ quantidade: parseInt(e.target.value) || 1 })}
+            value={produto.quantidade === 0 ? '' : produto.quantidade}
+            onChange={handleQuantidadeChange}
             className="mt-1 bg-white"
             placeholder="0"
           />
