@@ -416,11 +416,16 @@ const removerProdutoAvulso = (id: string) => {
                       <SelectValue placeholder="Selecione o tipo de tela" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Q45">Tela Q45</SelectItem>
-                      <SelectItem value="Q61">Tela Q61</SelectItem>
-                      <SelectItem value="Q92">Tela Q92</SelectItem>
-                      <SelectItem value="Q138">Tela Q138</SelectItem>
-                      <SelectItem value="Q196">Tela Q196</SelectItem>
+                      <SelectItem value="Q45">Tela Q45 20x20 3.4(2x3)</SelectItem>
+                      <SelectItem value="Q61">Tela Q61 15x15 3.4(2x3)</SelectItem>
+                      <SelectItem value="Q69">Tela Q69 20x20 4.2(2x3)</SelectItem>
+                      <SelectItem value="Q92">Tela Q92 15x15 4.2(2x3)</SelectItem>
+                      <SelectItem value="Q138">Tela Q138 10x10 4.2(2x3)</SelectItem>
+                      <SelectItem value="Q196">Tela Q196 10x10 5.0(2x3)</SelectItem>
+                      <SelectItem value="Q61">Tela Q61 15x15 3.4(2,45x6)</SelectItem>
+                      <SelectItem value="Q92">Tela Q92 15x15 4.2(2,45x6)</SelectItem>
+                      <SelectItem value="Q138">Tela Q138 10x10 4.2(2,45x6)</SelectItem>
+                      <SelectItem value="Q196">Tela Q196 10x10 5.0(2,45x6)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
