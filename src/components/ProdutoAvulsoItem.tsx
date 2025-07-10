@@ -54,6 +54,23 @@ const ProdutoAvulsoItem = ({ produto, index, totalProdutos, onUpdate, onRemove }
     return valorLimpo;
   };
 
+  // Função para lidar com mudança de quantidade
+  const handleQuantidadeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const valor = e.target.value;
+    
+    // Se o campo estiver vazio, permite que fique vazio temporariamente
+    if (valor === '') {
+      onUpdate({ quantidade: 0 });
+      return;
+    }
+    
+    // Converte para número e valida
+    const numero = parseInt(valor);
+    if (!isNaN(numero) && numero >= 0) {
+      onUpdate({ quantidade: numero });
+    }
+  };
+
   return (
     <div className="bg-gradient-to-r from-amber-50 to-orange-50 p-6 rounded-xl border-2 border-amber-200 shadow-md hover:shadow-lg transition-all">
       <div className="flex items-center justify-between mb-4">
