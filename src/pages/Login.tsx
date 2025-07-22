@@ -20,7 +20,8 @@ const Login = () => {
     const keepLogin = localStorage.getItem("keepLogin") === "true";
 
     if (savedEmail && keepLogin) {
-      navigate("/orcamento");
+     // Linhas ~21 e ~77, mudar:
+      navigate("/dashboard"); // ao invés de navigate("/orcamento");
     } else if (savedEmail) {
       setEmail(savedEmail);
     }
@@ -77,7 +78,8 @@ const Login = () => {
         localStorage.setItem("keepLogin", manterSalvo.toString());
 
         if (linkPlanilha && linkOrcamento) {
-          navigate("/orcamento");
+          // Linhas ~21 e ~77, mudar:
+          navigate("/dashboard"); // ao invés de navigate("/orcamento")
         } else {
           throw new Error("Links inválidos retornados do webhook.");
         }
