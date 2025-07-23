@@ -43,7 +43,7 @@ const Dashboard = () => {
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center h-16 md:h-20">
             <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900">
-              Sistema de Orçamentos
+              Sistema para Orçamentos de lajes treliçadas
             </h1>
             
             {/* Desktop Menu */}
@@ -95,7 +95,7 @@ const Dashboard = () => {
           {/* Welcome Section */}
           <div className="text-center mb-8 md:mb-12">
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold text-gray-800 mb-2">
-              Bem-vindo ao Sistema
+              Bem-vindo ao Sistema Orçamento de Laje Treliçada
             </h2>
             <p className="text-gray-600 text-sm md:text-base">
               Escolha uma opção para continuar
@@ -148,7 +148,7 @@ const Dashboard = () => {
           {/* Footer Info */}
           <div className="mt-12 md:mt-16 text-center">
             <p className="text-xs md:text-sm text-gray-500">
-              © 2025 Sistema de Orçamentos. Todos os direitos reservados.
+              © 2025 Sistema para Orçamentos de Lajes treliçadas. Todos os direitos reservados.
             </p>
           </div>
         </div>
