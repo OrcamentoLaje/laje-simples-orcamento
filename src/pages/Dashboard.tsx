@@ -23,6 +23,19 @@ const Dashboard = () => {
     navigate("/login");
   };
 
+  // Handlers com debug
+  const handleNovoOrcamento = () => {
+    console.log("🟢 CLICOU EM NOVO ORÇAMENTO");
+    console.log("🟢 Navegando para: /orcamento");
+    navigate("/orcamento");
+  };
+
+  const handleConsultaOrcamentos = () => {
+    console.log("🔵 CLICOU EM CONSULTA ORÇAMENTOS");
+    console.log("🔵 Navegando para: /consulta-orcamentos");
+    navigate("/consulta-orcamentos");
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
       {/* Header */}
@@ -93,8 +106,9 @@ const Dashboard = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8">
             {/* Novo Orçamento Card */}
             <Card 
-              className="group cursor-pointer transition-all duration-300 hover:shadow-2xl border-2 border-transparent hover:border-blue-200 overflow-hidden"
-              onClick={() => navigate("/orcamento")}
+              className="group cursor-pointer transition-all duration-300 hover:shadow-2xl border-2 border-transparent hover:border-blue-200 hover:z-10 relative"
+              onClick={handleNovoOrcamento}
+              style={{ backgroundColor: 'white' }}
             >
               <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-blue-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <CardHeader className="relative text-center p-6 md:p-8 lg:p-10">
@@ -112,8 +126,9 @@ const Dashboard = () => {
 
             {/* Consulta Orçamentos Card */}
             <Card 
-              className="group cursor-pointer transition-all duration-300 hover:shadow-2xl border-2 border-transparent hover:border-green-200 overflow-hidden"
-              onClick={() => navigate("/consulta-orcamentos")}
+              className="group cursor-pointer transition-all duration-300 hover:shadow-2xl border-2 border-transparent hover:border-green-200 hover:z-10 relative"
+              onClick={handleConsultaOrcamentos}
+              style={{ backgroundColor: 'white' }}
             >
               <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-green-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <CardHeader className="relative text-center p-6 md:p-8 lg:p-10">
@@ -143,4 +158,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
