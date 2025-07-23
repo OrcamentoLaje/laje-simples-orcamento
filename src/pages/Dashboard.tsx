@@ -95,7 +95,7 @@ const Dashboard = () => {
           {/* Welcome Section */}
           <div className="text-center mb-8 md:mb-12">
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold text-gray-800 mb-2">
-              Bem-vindo ao Sistema Orçamento de Laje Treliçada
+              Bem-vindo ao sistema
             </h2>
             <p className="text-gray-600 text-sm md:text-base">
               Escolha uma opção para continuar
